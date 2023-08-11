@@ -1,20 +1,8 @@
-import { Shape } from "./Shape"
-
-function throttle(callback: () => void, delay: number) {
-  let previousCall = new Date().getTime();
-  return function () {
-    const time = new Date().getTime();
-    if ((time - previousCall) >= delay) {
-      previousCall = time;
-      callback();
-    }
-  };
-}
+import { Rectangle, Shape } from "./Shape"
 
 export class CanvasRenderer {
   selectedElement: Shape | null = null
   highlightedElement: Shape | null = null
-  moveStartPositon: { x: number, y: number } = { x: 0, y: 0 }
   elementTree: Record<string, Shape> = {}
   renderCount = 0
   mousePosition: { x: number, y: number } = { x: 0, y: 0 }
@@ -26,15 +14,6 @@ export class CanvasRenderer {
 
   get context() {
     return this.canvas.getContext('2d')!
-  }
-
-  set moveStartPosition(position: { x: number, y: number }) {
-    console.log(position)
-    this.moveStartPositon = position
-  }
-
-  get moveStartPosition() {
-    return this.moveStartPositon
   }
 
   setDPI(dpi: number) {
@@ -60,7 +39,7 @@ export class CanvasRenderer {
     this.context.beginPath()
   }
 
-  draw = throttle(() => {
+  draw = () => {
     this.clear()
     Object.values(this.elementTree).forEach(element => {
       element.draw(this.context)
@@ -68,27 +47,29 @@ export class CanvasRenderer {
     this.highlightedElement?.highlight(this.context)
     this.selectedElement?.select(this.context)
     this.renderCount++
-  }, 1000 / 60)
+  }
 
   addElement(element: Shape) {
     this.elementTree[element.id] = element
     this.draw()
   }
 
-  moveElement() {
+  moveElement(dx: number, dy: number) {
     if (!this.selectedElement) return
-    this.selectedElement.move(this.mousePosition.x, this.mousePosition.y)
+    this.selectedElement.move(this.mousePosition.x - dx, this.mousePosition.y - dy)
     this.draw()
   }
 
   removeElement(element: Shape) {
+    this.selectedElement = null
     delete this.elementTree[element.id]
+    this.draw()
   }
 
   getElementAtPosition(x: number, y: number) {
     const elements = Object.values(this.elementTree)
     for (let i = elements.length - 1; i >= 0; i--) {
-      if (elements[i].isPointInside(x, y)) {
+      if (elements[i].isPointInside(x, y, this.context)) {
         return elements[i]
       }
     }
@@ -105,5 +86,19 @@ export class CanvasRenderer {
       this.highlightedElement = this.getElementAtPosition(this.mousePosition.x, this.mousePosition.y)
       this.draw()
     }
+  }
+
+  updateRectangleProperties({ x, y, w, h, r }: {
+    x?: number, y?: number, w?: number, h?: number, r?: number
+  }) {
+    if (this.selectedElement instanceof Rectangle) {
+      if (x !== undefined) this.selectedElement.x = x
+      if (y !== undefined) this.selectedElement.y = y
+      if (w !== undefined) this.selectedElement.w = w
+      if (h !== undefined) this.selectedElement.h = h
+      if (r !== undefined) this.selectedElement.radius = r
+      this.draw()
+    }
+
   }
 }

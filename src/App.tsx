@@ -1,11 +1,9 @@
-import { Canvas } from './components/Canvas'
+import { AppCanvas } from './components/AppCanvas'
 
 function App() {
 
   return (
-    <>
-      <Canvas />
-    </>
+    <AppCanvas />
   )
 }
 
