@@ -1,11 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Shape } from "../../classes/Shape";
 import { Button } from "../Button";
-import { nanoid } from "nanoid";
 import { CanvasRenderer } from "../../classes/CanvasRenderer";
 import { Rectangle } from "../../classes/Rectangle";
 import { Circle } from "../../classes/Circle";
-import { Text } from "../../classes/Text";
+import { TextElement } from "../../classes/TextElement";
 
 const RectangleEditor: React.FC<{
   rectangle: Rectangle;
@@ -16,11 +15,11 @@ const RectangleEditor: React.FC<{
       <label>
         Width
         <input
-          defaultValue={rectangle.w}
+          defaultValue={rectangle.width}
           type="number"
           onChange={(event) => {
             renderer.updateRectangleProperties({
-              w: Number(event.target.value),
+              width: Number(event.target.value),
             });
           }}
         />
@@ -28,11 +27,11 @@ const RectangleEditor: React.FC<{
       <label>
         Height
         <input
-          defaultValue={rectangle.h}
+          defaultValue={rectangle.height}
           type="number"
           onChange={(event) => {
             renderer.updateRectangleProperties({
-              h: Number(event.target.value),
+              height: Number(event.target.value),
             });
           }}
         />
@@ -44,7 +43,219 @@ const RectangleEditor: React.FC<{
           type="number"
           onChange={(event) => {
             renderer.updateRectangleProperties({
+              radius: Number(event.target.value),
+            });
+          }}
+        />
+      </label>
+      <label>
+        X
+        <input
+          defaultValue={rectangle.x}
+          type="number"
+          onChange={(event) => {
+            renderer.updateRectangleProperties({
+              x: Number(event.target.value),
+            });
+          }}
+        />
+      </label>
+      <label>
+        Y
+        <input
+          defaultValue={rectangle.y}
+          type="number"
+          onChange={(event) => {
+            renderer.updateRectangleProperties({
+              y: Number(event.target.value),
+            });
+          }}
+        />
+      </label>
+      <label>
+        Fill
+        <input
+          defaultValue={rectangle.fillStyle}
+          type="color"
+          onChange={(event) => {
+            renderer.updateRectangleProperties({
+              fillStyle: event.target.value,
+            });
+          }}
+        />
+      </label>
+      <label>
+        Stroke
+        <input
+          defaultValue={rectangle.strokeStyle}
+          type="color"
+          onChange={(event) => {
+            renderer.updateRectangleProperties({
+              strokeStyle: event.target.value,
+            });
+          }}
+        />
+      </label>
+      <label>
+        Stroke Width
+        <input
+          defaultValue={rectangle.lineWidth}
+          type="number"
+          onChange={(event) => {
+            renderer.updateRectangleProperties({
+              lineWidth: Number(event.target.value),
+            });
+          }}
+        />
+      </label>
+    </>
+  );
+};
+
+const CircleEditor: React.FC<{
+  circle: Circle;
+  renderer: CanvasRenderer;
+}> = ({ circle, renderer }) => {
+  return (
+    <>
+      <label>
+        Radius
+        <input
+          defaultValue={circle.r}
+          type="number"
+          onChange={(event) => {
+            renderer.updateCircleProperties({
               r: Number(event.target.value),
+            });
+          }}
+        />
+      </label>
+      <label>
+        X
+        <input
+          defaultValue={circle.cx}
+          type="number"
+          onChange={(event) => {
+            renderer.updateCircleProperties({
+              cx: Number(event.target.value),
+            });
+          }}
+        />
+      </label>
+      <label>
+        Y
+        <input
+          defaultValue={circle.cy}
+          type="number"
+          onChange={(event) => {
+            renderer.updateCircleProperties({
+              cy: Number(event.target.value),
+            });
+          }}
+        />
+      </label>
+      <label>
+        Fill
+        <input
+          defaultValue={circle.fillStyle}
+          type="color"
+          onChange={(event) => {
+            renderer.updateCircleProperties({
+              fillStyle: event.target.value,
+            });
+          }}
+        />
+      </label>
+      <label>
+        Stroke
+        <input
+          defaultValue={circle.strokeStyle}
+          type="color"
+          onChange={(event) => {
+            renderer.updateCircleProperties({
+              strokeStyle: event.target.value,
+            });
+          }}
+        />
+      </label>
+      <label>
+        Stroke Width
+        <input
+          defaultValue={circle.lineWidth}
+          type="number"
+          onChange={(event) => {
+            renderer.updateCircleProperties({
+              lineWidth: Number(event.target.value),
+            });
+          }}
+        />
+      </label>
+    </>
+  );
+};
+
+const TextEditor: React.FC<{
+  textElement: TextElement;
+  renderer: CanvasRenderer;
+}> = ({ textElement, renderer }) => {
+  return (
+    <>
+      <label>
+        Text
+        <input
+          defaultValue={textElement.text}
+          type="text"
+          onChange={(event) => {
+            renderer.updateTextProperties({
+              text: event.target.value,
+            });
+          }}
+        />
+      </label>
+      <label>
+        X
+        <input
+          defaultValue={textElement.x}
+          type="number"
+          onChange={(event) => {
+            renderer.updateTextProperties({
+              x: Number(event.target.value),
+            });
+          }}
+        />
+      </label>
+      <label>
+        Y
+        <input
+          defaultValue={textElement.y}
+          type="number"
+          onChange={(event) => {
+            renderer.updateTextProperties({
+              y: Number(event.target.value),
+            });
+          }}
+        />
+      </label>
+      <label>
+        Fill
+        <input
+          defaultValue={textElement.fillStyle}
+          type="color"
+          onChange={(event) => {
+            renderer.updateTextProperties({
+              fillStyle: event.target.value,
+            });
+          }}
+        />
+      </label>
+      <label>
+        Font Size
+        <input
+          defaultValue={textElement.fontSize}
+          type="number"
+          onChange={(event) => {
+            renderer.updateTextProperties({
+              fontSize: Number(event.target.value),
             });
           }}
         />
@@ -129,53 +340,57 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({ onSelect, onDrag }) => {
           if (mode === "draw") {
             if (!selectedShape) return;
             if (selectedShape === "circle") {
-              const circle = new Circle(
-                50,
-                renderer.mousePosition.x,
-                renderer.mousePosition.y,
-                nanoid()
-              );
+              const circle = new Circle({
+                r: 50,
+                cx: renderer.mousePosition.x,
+                cy: renderer.mousePosition.y,
+              });
               renderer.addElement(circle);
             } else if (selectedShape === "rectangle") {
-              const rectangle = new Rectangle(
-                renderer.mousePosition.x,
-                renderer.mousePosition.y,
-                100,
-                100,
-                nanoid()
-              );
+              const rectangle = new Rectangle({
+                ...renderer.mousePosition,
+                width: 100,
+                height: 100,
+              });
               renderer.addElement(rectangle);
             } else if (selectedShape === "text") {
-              const text = new Text(
-                renderer.mousePosition.x,
-                renderer.mousePosition.y,
-                "Hello World",
-                nanoid()
-              );
+              const text = new TextElement({
+                ...renderer.mousePosition,
+                text: "Hello World",
+              });
               renderer.addElement(text);
             }
           }
           if (mode === "select") {
             renderer.selectElement();
             onSelect?.(renderer.selectedElement!);
-            setSelectedElement(renderer.selectedElement);
           }
+          setSelectedElement(renderer.selectedElement);
 
           setMode("select");
         }}
         onMouseMove={handleMouseMove}
       />
       <div className="absolute top-0 left-0 p-2 bg-white flex gap-2">
-        <Button onClick={() => setMode("select")}>Select</Button>
+        <Button
+          active={mode === "select"}
+          onClick={() => {
+            setMode("select");
+          }}
+        >
+          Select
+        </Button>
         <Button
           onClick={() => {
             if (!renderer || !renderer.selectedElement) return;
             renderer.removeElement(renderer.selectedElement);
+            setSelectedElement(null);
           }}
         >
           Delete
         </Button>
         <Button
+          active={mode === "draw" && selectedShape === "circle"}
           onClick={() => {
             setMode("draw");
             setSelectedShape("circle");
@@ -184,6 +399,7 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({ onSelect, onDrag }) => {
           ○
         </Button>
         <Button
+          active={mode === "draw" && selectedShape === "rectangle"}
           onClick={() => {
             setMode("draw");
             setSelectedShape("rectangle");
@@ -192,6 +408,7 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({ onSelect, onDrag }) => {
           □
         </Button>
         <Button
+          active={mode === "draw" && selectedShape === "text"}
           onClick={() => {
             setMode("draw");
             setSelectedShape("text");
@@ -201,15 +418,38 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({ onSelect, onDrag }) => {
         </Button>
       </div>
       <div className="absolute top-0 right-0 p-2 bg-white flex flex-col gap-2">
-        {renderer && selectedElement && selectedElement instanceof Rectangle ? (
-          <RectangleEditor
-            key={selectedElement.id}
-            rectangle={selectedElement}
-            renderer={renderer}
-          />
-        ) : (
-          "nope"
-        )}
+        {(() => {
+          if (renderer && selectedElement) {
+            if (selectedElement instanceof Circle) {
+              return (
+                <CircleEditor
+                  key={selectedElement.id}
+                  circle={selectedElement}
+                  renderer={renderer}
+                />
+              );
+            }
+            if (selectedElement instanceof Rectangle) {
+              return (
+                <RectangleEditor
+                  key={selectedElement.id}
+                  rectangle={selectedElement}
+                  renderer={renderer}
+                />
+              );
+            }
+            if (selectedElement instanceof TextElement) {
+              return (
+                <TextEditor
+                  key={selectedElement.id}
+                  textElement={selectedElement}
+                  renderer={renderer}
+                />
+              );
+            }
+          }
+          return "Select an element to edit";
+        })()}
       </div>
     </div>
   );
