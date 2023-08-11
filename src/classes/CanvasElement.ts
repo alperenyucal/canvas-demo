@@ -1,4 +1,4 @@
-export interface CanvasElement {
+export type CanvasElement<T = {}> = T & {
   id: string;
   draw(context: CanvasRenderingContext2D): void;
   highlight(context: CanvasRenderingContext2D): void;
@@ -11,4 +11,5 @@ export interface CanvasElement {
   move(x: number, y: number): void;
   getDiff(x: number, y: number): { dx: number; dy: number };
   resize(x: number, y: number): void;
-}
+  setProperties(properties: Partial<T>): void;
+};

@@ -1,10 +1,12 @@
-import { Rectangle } from "./Rectangle";
-import { Shape } from "./Shape";
+import { CanvasElement } from "./CanvasElement";
+import { Circle, CircleProperties } from "./Circle";
+import { Rectangle, RectangleProperties } from "./Rectangle";
+import { TextElement, TextProperties } from "./TextElement";
 
 export class CanvasRenderer {
-  selectedElement: Shape | null = null;
-  highlightedElement: Shape | null = null;
-  elementTree: Record<string, Shape> = {};
+  selectedElement: CanvasElement | null = null;
+  highlightedElement: CanvasElement | null = null;
+  elementTree: Record<string, CanvasElement> = {};
   renderCount = 0;
   mousePosition: { x: number; y: number } = { x: 0, y: 0 };
 
@@ -48,12 +50,19 @@ export class CanvasRenderer {
       element.draw(this.context);
     });
     this.highlightedElement?.highlight(this.context);
+    if (this.highlightedElement && !this.selectedElement) {
+      // set cursor to pointer
+      this.canvas.style.cursor = "pointer";
+    } else {
+      this.canvas.style.cursor = "default";
+    }
     this.selectedElement?.select(this.context);
     this.renderCount++;
   };
 
-  addElement(element: Shape) {
+  addElement(element: CanvasElement) {
     this.elementTree[element.id] = element;
+    this.selectedElement = element;
     this.draw();
   }
 
@@ -66,7 +75,7 @@ export class CanvasRenderer {
     this.draw();
   }
 
-  removeElement(element: Shape) {
+  removeElement(element: CanvasElement) {
     this.selectedElement = null;
     delete this.elementTree[element.id];
     this.draw();
@@ -103,26 +112,27 @@ export class CanvasRenderer {
     }
   }
 
-  updateRectangleProperties({
-    x,
-    y,
-    w,
-    h,
-    r,
-  }: {
-    x?: number;
-    y?: number;
-    w?: number;
-    h?: number;
-    r?: number;
-  }) {
-    if (this.selectedElement instanceof Rectangle) {
-      if (x !== undefined) this.selectedElement.x = x;
-      if (y !== undefined) this.selectedElement.y = y;
-      if (w !== undefined) this.selectedElement.w = w;
-      if (h !== undefined) this.selectedElement.h = h;
-      if (r !== undefined) this.selectedElement.radius = r;
-      this.draw();
-    }
+  updateElementProperties<T = {}>(properties: Partial<T>) {
+    if (!this.selectedElement) return;
+    this.selectedElement.setProperties(properties);
+    this.draw();
+  }
+
+  updateRectangleProperties(properties: Partial<RectangleProperties>) {
+    if (!this.selectedElement || !(this.selectedElement instanceof Rectangle))
+      return;
+    this.updateElementProperties<RectangleProperties>(properties);
+  }
+
+  updateCircleProperties(properties: Partial<CircleProperties>) {
+    if (!this.selectedElement || !(this.selectedElement instanceof Circle))
+      return;
+    this.updateElementProperties<CircleProperties>(properties);
+  }
+
+  updateTextProperties(properties: Partial<TextProperties>) {
+    if (!this.selectedElement || !(this.selectedElement instanceof TextElement))
+      return;
+    this.updateElementProperties<TextProperties>(properties);
   }
 }
