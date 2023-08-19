@@ -37,6 +37,7 @@ export class CanvasRenderer {
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
     this.setDPI(324);
+    this.draw();
   }
 
   clear() {
@@ -91,7 +92,12 @@ export class CanvasRenderer {
     return null;
   }
 
-  selectElement() {
+  selectElement(element: CanvasElement) {
+    this.selectedElement = element;
+    this.draw();
+  }
+
+  selectElementAtPosition() {
     this.selectedElement = this.getElementAtPosition(
       this.mousePosition.x,
       this.mousePosition.y
