@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Shape } from "../../classes/Shape";
 import { Button } from "../Button";
 import { CanvasRenderer } from "../../classes/CanvasRenderer";
@@ -278,6 +278,11 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({ onSelect, onDrag }) => {
   const [renderer, setRenderer] = useState<CanvasRenderer>();
   const [selectedElement, setSelectedElement] = useState<Shape | null>();
 
+  const elementTree = useMemo(() => {
+    if (!renderer) return null;
+    return renderer.elementTree;
+  }, [renderer?.elementTree]);
+
   useEffect(() => {
     if (!canvasRef.current) return;
     setRenderer(new CanvasRenderer(canvasRef.current));
@@ -294,7 +299,7 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({ onSelect, onDrag }) => {
 
     const downListener = () => {
       isMouseDown = true;
-      renderer.selectElement();
+      renderer.selectElementAtPosition();
       mouseDownPosition = renderer.selectedElement?.getDiff(
         renderer.mousePosition.x,
         renderer.mousePosition.y
@@ -362,7 +367,7 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({ onSelect, onDrag }) => {
             }
           }
           if (mode === "select") {
-            renderer.selectElement();
+            renderer.selectElementAtPosition();
             onSelect?.(renderer.selectedElement!);
           }
           setSelectedElement(renderer.selectedElement);
@@ -416,6 +421,25 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({ onSelect, onDrag }) => {
         >
           T
         </Button>
+      </div>
+      <div className="absolute bottom-0 left-0 p-2 bg-white flex flex-col gap-2">
+        {elementTree &&
+          Object.entries(elementTree)?.map(([id, element]) => {
+            return (
+              <div key={id}>
+                <button
+                  onClick={() => {
+                    if (!renderer) return;
+                    renderer.selectElement(element);
+                    setSelectedElement(renderer.selectedElement);
+                    onSelect?.(renderer.selectedElement!);
+                  }}
+                >
+                  {element.constructor.name}
+                </button>
+              </div>
+            );
+          })}
       </div>
       <div className="absolute top-0 right-0 p-2 bg-white flex flex-col gap-2">
         {(() => {
