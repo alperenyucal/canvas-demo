@@ -6,7 +6,7 @@ export type CanvasElement<T = {}> = T & {
   isPointInside(
     x: number,
     y: number,
-    context: CanvasRenderingContext2D
+    context?: CanvasRenderingContext2D
   ): boolean;
   move(x: number, y: number): void;
   getDiff(x: number, y: number): { dx: number; dy: number };

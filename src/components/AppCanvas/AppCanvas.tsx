@@ -1,15 +1,15 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Shape } from "../../classes/Shape";
+import { Shape } from "../../classes/Elements/Shape";
 import { Button } from "../Button";
-import { CanvasRenderer } from "../../classes/CanvasRenderer";
-import { Rectangle } from "../../classes/Rectangle";
-import { Circle } from "../../classes/Circle";
-import { TextElement } from "../../classes/TextElement";
+import { Rectangle } from "../../classes/Elements/Rectangle";
+import { Circle } from "../../classes/Elements/Circle";
+import { TextElement } from "../../classes/Elements/TextElement";
+import { CanvasManager } from "../../classes/CanvasManager/CanvasManager";
 
 const RectangleEditor: React.FC<{
   rectangle: Rectangle;
-  renderer: CanvasRenderer;
-}> = ({ rectangle, renderer }) => {
+  manager: CanvasManager;
+}> = ({ rectangle, manager }) => {
   return (
     <>
       <label>
@@ -18,7 +18,7 @@ const RectangleEditor: React.FC<{
           defaultValue={rectangle.width}
           type="number"
           onChange={(event) => {
-            renderer.updateRectangleProperties({
+            manager.updateRectangleProperties({
               width: Number(event.target.value),
             });
           }}
@@ -30,7 +30,7 @@ const RectangleEditor: React.FC<{
           defaultValue={rectangle.height}
           type="number"
           onChange={(event) => {
-            renderer.updateRectangleProperties({
+            manager.updateRectangleProperties({
               height: Number(event.target.value),
             });
           }}
@@ -42,7 +42,7 @@ const RectangleEditor: React.FC<{
           defaultValue={rectangle.radius}
           type="number"
           onChange={(event) => {
-            renderer.updateRectangleProperties({
+            manager.updateRectangleProperties({
               radius: Number(event.target.value),
             });
           }}
@@ -54,7 +54,7 @@ const RectangleEditor: React.FC<{
           defaultValue={rectangle.x}
           type="number"
           onChange={(event) => {
-            renderer.updateRectangleProperties({
+            manager.updateRectangleProperties({
               x: Number(event.target.value),
             });
           }}
@@ -66,7 +66,7 @@ const RectangleEditor: React.FC<{
           defaultValue={rectangle.y}
           type="number"
           onChange={(event) => {
-            renderer.updateRectangleProperties({
+            manager.updateRectangleProperties({
               y: Number(event.target.value),
             });
           }}
@@ -78,7 +78,7 @@ const RectangleEditor: React.FC<{
           defaultValue={rectangle.fillStyle}
           type="color"
           onChange={(event) => {
-            renderer.updateRectangleProperties({
+            manager.updateRectangleProperties({
               fillStyle: event.target.value,
             });
           }}
@@ -90,7 +90,7 @@ const RectangleEditor: React.FC<{
           defaultValue={rectangle.strokeStyle}
           type="color"
           onChange={(event) => {
-            renderer.updateRectangleProperties({
+            manager.updateRectangleProperties({
               strokeStyle: event.target.value,
             });
           }}
@@ -102,7 +102,7 @@ const RectangleEditor: React.FC<{
           defaultValue={rectangle.lineWidth}
           type="number"
           onChange={(event) => {
-            renderer.updateRectangleProperties({
+            manager.updateRectangleProperties({
               lineWidth: Number(event.target.value),
             });
           }}
@@ -114,8 +114,8 @@ const RectangleEditor: React.FC<{
 
 const CircleEditor: React.FC<{
   circle: Circle;
-  renderer: CanvasRenderer;
-}> = ({ circle, renderer }) => {
+  manager: CanvasManager;
+}> = ({ circle, manager }) => {
   return (
     <>
       <label>
@@ -124,7 +124,7 @@ const CircleEditor: React.FC<{
           defaultValue={circle.r}
           type="number"
           onChange={(event) => {
-            renderer.updateCircleProperties({
+            manager.updateCircleProperties({
               r: Number(event.target.value),
             });
           }}
@@ -136,7 +136,7 @@ const CircleEditor: React.FC<{
           defaultValue={circle.cx}
           type="number"
           onChange={(event) => {
-            renderer.updateCircleProperties({
+            manager.updateCircleProperties({
               cx: Number(event.target.value),
             });
           }}
@@ -148,7 +148,7 @@ const CircleEditor: React.FC<{
           defaultValue={circle.cy}
           type="number"
           onChange={(event) => {
-            renderer.updateCircleProperties({
+            manager.updateCircleProperties({
               cy: Number(event.target.value),
             });
           }}
@@ -160,7 +160,7 @@ const CircleEditor: React.FC<{
           defaultValue={circle.fillStyle}
           type="color"
           onChange={(event) => {
-            renderer.updateCircleProperties({
+            manager.updateCircleProperties({
               fillStyle: event.target.value,
             });
           }}
@@ -172,7 +172,7 @@ const CircleEditor: React.FC<{
           defaultValue={circle.strokeStyle}
           type="color"
           onChange={(event) => {
-            renderer.updateCircleProperties({
+            manager.updateCircleProperties({
               strokeStyle: event.target.value,
             });
           }}
@@ -184,7 +184,7 @@ const CircleEditor: React.FC<{
           defaultValue={circle.lineWidth}
           type="number"
           onChange={(event) => {
-            renderer.updateCircleProperties({
+            manager.updateCircleProperties({
               lineWidth: Number(event.target.value),
             });
           }}
@@ -196,8 +196,8 @@ const CircleEditor: React.FC<{
 
 const TextEditor: React.FC<{
   textElement: TextElement;
-  renderer: CanvasRenderer;
-}> = ({ textElement, renderer }) => {
+  manager: CanvasManager;
+}> = ({ textElement, manager }) => {
   return (
     <>
       <label>
@@ -206,7 +206,7 @@ const TextEditor: React.FC<{
           defaultValue={textElement.text}
           type="text"
           onChange={(event) => {
-            renderer.updateTextProperties({
+            manager.updateTextProperties({
               text: event.target.value,
             });
           }}
@@ -218,7 +218,7 @@ const TextEditor: React.FC<{
           defaultValue={textElement.x}
           type="number"
           onChange={(event) => {
-            renderer.updateTextProperties({
+            manager.updateTextProperties({
               x: Number(event.target.value),
             });
           }}
@@ -230,7 +230,7 @@ const TextEditor: React.FC<{
           defaultValue={textElement.y}
           type="number"
           onChange={(event) => {
-            renderer.updateTextProperties({
+            manager.updateTextProperties({
               y: Number(event.target.value),
             });
           }}
@@ -242,7 +242,7 @@ const TextEditor: React.FC<{
           defaultValue={textElement.fillStyle}
           type="color"
           onChange={(event) => {
-            renderer.updateTextProperties({
+            manager.updateTextProperties({
               fillStyle: event.target.value,
             });
           }}
@@ -254,7 +254,7 @@ const TextEditor: React.FC<{
           defaultValue={textElement.fontSize}
           type="number"
           onChange={(event) => {
-            renderer.updateTextProperties({
+            manager.updateTextProperties({
               fontSize: Number(event.target.value),
             });
           }}
@@ -264,34 +264,34 @@ const TextEditor: React.FC<{
   );
 };
 
-interface AppCanvasProps {
-  onSelect?: (element: Shape) => void;
-  onDrag?: (element: Shape) => void;
-}
+interface AppCanvasProps {}
 
-export const AppCanvas: React.FC<AppCanvasProps> = ({ onSelect, onDrag }) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+export const AppCanvas: React.FC<AppCanvasProps> = () => {
+  const elementTreeCanvasRef = useRef<HTMLCanvasElement>(null);
+  const actionCanvasRef = useRef<HTMLCanvasElement>(null);
   const [mode, setMode] = useState("draw");
   const [selectedShape, setSelectedShape] = useState<
     "circle" | "rectangle" | "text"
   >();
-  const [renderer, setRenderer] = useState<CanvasRenderer>();
+  const [manager, setRenderer] = useState<CanvasManager>();
   const [selectedElement, setSelectedElement] = useState<Shape | null>();
 
   const elementTree = useMemo(() => {
-    if (!renderer) return null;
-    return renderer.elementTree;
-  }, [renderer?.elementTree]);
+    if (!manager) return null;
+    return manager.elementTree;
+  }, [manager?.elementTree]);
 
   useEffect(() => {
-    if (!canvasRef.current) return;
-    setRenderer(new CanvasRenderer(canvasRef.current));
+    if (!elementTreeCanvasRef.current || !actionCanvasRef.current) return;
+    setRenderer(
+      new CanvasManager(elementTreeCanvasRef.current, actionCanvasRef.current)
+    );
   }, []);
 
   useEffect(() => {
-    const canvasElement = canvasRef.current;
-    if (!canvasRef.current) return;
-    if (!renderer) return;
+    const actionCanvas = actionCanvasRef.current;
+    if (!actionCanvas) return;
+    if (!manager) return;
 
     let isMouseDown = false;
 
@@ -299,78 +299,77 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({ onSelect, onDrag }) => {
 
     const downListener = () => {
       isMouseDown = true;
-      renderer.selectElementAtPosition();
-      mouseDownPosition = renderer.selectedElement?.getDiff(
-        renderer.mousePosition.x,
-        renderer.mousePosition.y
+      manager.selectElementAtPosition();
+      mouseDownPosition = manager.selectedElement?.getDiff(
+        manager.mousePosition.x,
+        manager.mousePosition.y
       );
-      onSelect?.(renderer.selectedElement!);
     };
-    canvasRef.current.addEventListener("mousedown", downListener);
+    actionCanvas.addEventListener("mousedown", downListener);
     const moveListener = () => {
       if (!isMouseDown) return;
-      onDrag?.(renderer.selectedElement!);
       if (!mouseDownPosition) return;
-      renderer.moveElement(mouseDownPosition.dx, mouseDownPosition.dy);
+      manager.moveElement(mouseDownPosition.dx, mouseDownPosition.dy);
     };
-    canvasRef.current.addEventListener("mousemove", moveListener);
+    actionCanvas.addEventListener("mousemove", moveListener);
     const upListener = () => {
       isMouseDown = false;
     };
-    canvasRef.current.addEventListener("mouseup", upListener);
+    actionCanvas.addEventListener("mouseup", upListener);
     return () => {
-      canvasElement?.removeEventListener("mousedown", downListener);
-      canvasElement?.removeEventListener("mousemove", moveListener);
-      canvasElement?.removeEventListener("mouseup", upListener);
+      actionCanvas.removeEventListener("mousedown", downListener);
+      actionCanvas.removeEventListener("mousemove", moveListener);
+      actionCanvas.removeEventListener("mouseup", upListener);
     };
-  }, [onDrag, onSelect, renderer]);
+  }, [manager]);
 
   function handleMouseMove(
     event: React.MouseEvent<HTMLCanvasElement, MouseEvent>
   ) {
-    if (!renderer) return;
-    renderer.mousePosition = {
+    if (!manager) return;
+    manager.mousePosition = {
       x: event.clientX,
       y: event.clientY,
     };
-    renderer.highlightElement();
+    manager.highlightElement();
   }
 
   return (
     <div className="relative">
+      <canvas ref={elementTreeCanvasRef} className="absolute" />
       <canvas
-        ref={canvasRef}
+        ref={actionCanvasRef}
+        className="absolute"
         onClick={() => {
-          if (!renderer) return;
+          if (!manager) return;
           if (mode === "draw") {
             if (!selectedShape) return;
             if (selectedShape === "circle") {
               const circle = new Circle({
                 r: 50,
-                cx: renderer.mousePosition.x,
-                cy: renderer.mousePosition.y,
+                cx: manager.mousePosition.x,
+                cy: manager.mousePosition.y,
               });
-              renderer.addElement(circle);
+              manager.addElement(circle);
             } else if (selectedShape === "rectangle") {
               const rectangle = new Rectangle({
-                ...renderer.mousePosition,
+                ...manager.mousePosition,
                 width: 100,
                 height: 100,
               });
-              renderer.addElement(rectangle);
+              manager.addElement(rectangle);
             } else if (selectedShape === "text") {
               const text = new TextElement({
-                ...renderer.mousePosition,
+                ...manager.mousePosition,
                 text: "Hello World",
               });
-              renderer.addElement(text);
+              manager.addElement(text);
             }
           }
           if (mode === "select") {
-            renderer.selectElementAtPosition();
-            onSelect?.(renderer.selectedElement!);
+            manager.selectElementAtPosition();
           }
-          setSelectedElement(renderer.selectedElement);
+          setSelectedElement(manager.selectedElement);
 
           setMode("select");
         }}
@@ -387,8 +386,8 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({ onSelect, onDrag }) => {
         </Button>
         <Button
           onClick={() => {
-            if (!renderer || !renderer.selectedElement) return;
-            renderer.removeElement(renderer.selectedElement);
+            if (!manager || !manager.selectedElement) return;
+            manager.removeElement(manager.selectedElement);
             setSelectedElement(null);
           }}
         >
@@ -429,10 +428,9 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({ onSelect, onDrag }) => {
               <div key={id}>
                 <button
                   onClick={() => {
-                    if (!renderer) return;
-                    renderer.selectElement(element);
-                    setSelectedElement(renderer.selectedElement);
-                    onSelect?.(renderer.selectedElement!);
+                    if (!manager) return;
+                    manager.selectElement(element);
+                    setSelectedElement(manager.selectedElement);
                   }}
                 >
                   {element.constructor.name}
@@ -443,13 +441,13 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({ onSelect, onDrag }) => {
       </div>
       <div className="absolute top-0 right-0 p-2 bg-white flex flex-col gap-2">
         {(() => {
-          if (renderer && selectedElement) {
+          if (manager && selectedElement) {
             if (selectedElement instanceof Circle) {
               return (
                 <CircleEditor
                   key={selectedElement.id}
                   circle={selectedElement}
-                  renderer={renderer}
+                  manager={manager}
                 />
               );
             }
@@ -458,7 +456,7 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({ onSelect, onDrag }) => {
                 <RectangleEditor
                   key={selectedElement.id}
                   rectangle={selectedElement}
-                  renderer={renderer}
+                  manager={manager}
                 />
               );
             }
@@ -467,7 +465,7 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({ onSelect, onDrag }) => {
                 <TextEditor
                   key={selectedElement.id}
                   textElement={selectedElement}
-                  renderer={renderer}
+                  manager={manager}
                 />
               );
             }

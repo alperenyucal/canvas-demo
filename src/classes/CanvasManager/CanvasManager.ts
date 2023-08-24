@@ -1,70 +1,59 @@
-import { CanvasElement } from "./CanvasElement";
-import { Circle, CircleProperties } from "./Circle";
-import { Rectangle, RectangleProperties } from "./Rectangle";
-import { TextElement, TextProperties } from "./TextElement";
+import { CanvasElement } from "../Elements/CanvasElement";
+import { Circle, CircleProperties } from "../Elements/Circle";
+import { Rectangle, RectangleProperties } from "../Elements/Rectangle";
+import { TextElement, TextProperties } from "../Elements/TextElement";
+import { ActionRenderer } from "../Renderers/ActionRenderer";
+import { ElementTreeRenderer } from "../Renderers/ElementTreeRenderer";
 
-export class CanvasRenderer {
-  selectedElement: CanvasElement | null = null;
-  highlightedElement: CanvasElement | null = null;
-  elementTree: Record<string, CanvasElement> = {};
-  renderCount = 0;
+const elementTree: Record<string, CanvasElement> = {};
+
+export class CanvasManager {
   mousePosition: { x: number; y: number } = { x: 0, y: 0 };
+  elementTree: Record<string, CanvasElement>;
+  elementTreeRenderer: ElementTreeRenderer;
+  actionRenderer: ActionRenderer;
+  private _selectedElement: CanvasElement | null = null;
+  private _highlightedElement: CanvasElement | null = null;
 
-  constructor(public canvas: HTMLCanvasElement) {
-    this.resizeCanvas();
-    window.addEventListener("resize", () => this.resizeCanvas());
+  constructor(
+    elementTreeCanvas: HTMLCanvasElement,
+    actionCanvas: HTMLCanvasElement
+  ) {
+    this.elementTree = elementTree;
+    this.elementTreeRenderer = new ElementTreeRenderer(
+      elementTreeCanvas,
+      this.elementTree
+    );
+    this.actionRenderer = new ActionRenderer(
+      actionCanvas,
+      this.selectedElement,
+      this.highlightedElement
+    );
   }
 
-  get context() {
-    return this.canvas.getContext("2d")!;
+  get selectedElement() {
+    return this._selectedElement;
   }
 
-  setDPI(dpi: number) {
-    // Set up CSS size.
-    this.canvas.style.width =
-      this.canvas.style.width || this.canvas.width + "px";
-    this.canvas.style.height =
-      this.canvas.style.height || this.canvas.height + "px";
-
-    // Resize canvas and scale future draws.
-    const scaleFactor = dpi / 96;
-    this.canvas.width = Math.ceil(this.canvas.width * scaleFactor);
-    this.canvas.height = Math.ceil(this.canvas.height * scaleFactor);
-    this.context.scale(scaleFactor, scaleFactor);
+  set selectedElement(element: CanvasElement | null) {
+    this.actionRenderer.selectedElement = element;
+    this._selectedElement = element;
   }
 
-  resizeCanvas() {
-    this.canvas.width = window.innerWidth;
-    this.canvas.height = window.innerHeight;
-    this.setDPI(324);
-    this.draw();
+  get highlightedElement() {
+    return this._highlightedElement;
   }
 
-  clear() {
-    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.context.beginPath();
+  set highlightedElement(element: CanvasElement | null) {
+    this.actionRenderer.highlightedElement = element;
+    this._highlightedElement = element;
   }
-
-  draw = () => {
-    this.clear();
-    Object.values(this.elementTree).forEach((element) => {
-      element.draw(this.context);
-    });
-    this.highlightedElement?.highlight(this.context);
-    if (this.highlightedElement && !this.selectedElement) {
-      // set cursor to pointer
-      this.canvas.style.cursor = "pointer";
-    } else {
-      this.canvas.style.cursor = "default";
-    }
-    this.selectedElement?.select(this.context);
-    this.renderCount++;
-  };
 
   addElement(element: CanvasElement) {
     this.elementTree[element.id] = element;
     this.selectedElement = element;
-    this.draw();
+    this.elementTreeRenderer.render();
+    this.actionRenderer.render();
   }
 
   moveElement(dx: number, dy: number) {
@@ -73,19 +62,21 @@ export class CanvasRenderer {
       this.mousePosition.x - dx,
       this.mousePosition.y - dy
     );
-    this.draw();
+    this.elementTreeRenderer.render();
+    this.actionRenderer.render();
   }
 
   removeElement(element: CanvasElement) {
     this.selectedElement = null;
     delete this.elementTree[element.id];
-    this.draw();
+    this.elementTreeRenderer.render();
+    this.actionRenderer.render();
   }
 
   getElementAtPosition(x: number, y: number) {
     const elements = Object.values(this.elementTree);
     for (let i = elements.length - 1; i >= 0; i--) {
-      if (elements[i].isPointInside(x, y, this.context)) {
+      if (elements[i].isPointInside(x, y)) {
         return elements[i];
       }
     }
@@ -94,7 +85,7 @@ export class CanvasRenderer {
 
   selectElement(element: CanvasElement) {
     this.selectedElement = element;
-    this.draw();
+    this.actionRenderer.render();
   }
 
   selectElementAtPosition() {
@@ -102,7 +93,7 @@ export class CanvasRenderer {
       this.mousePosition.x,
       this.mousePosition.y
     );
-    this.draw();
+    this.actionRenderer.render();
   }
 
   highlightElement() {
@@ -114,14 +105,15 @@ export class CanvasRenderer {
         this.mousePosition.x,
         this.mousePosition.y
       );
-      this.draw();
     }
+    this.actionRenderer.render();
   }
 
   updateElementProperties<T = {}>(properties: Partial<T>) {
     if (!this.selectedElement) return;
     this.selectedElement.setProperties(properties);
-    this.draw();
+    this.elementTreeRenderer.render();
+    this.actionRenderer.render();
   }
 
   updateRectangleProperties(properties: Partial<RectangleProperties>) {
