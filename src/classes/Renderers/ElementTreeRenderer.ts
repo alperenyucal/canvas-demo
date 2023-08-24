@@ -17,7 +17,5 @@ export class ElementTreeRenderer extends BaseRenderer {
     Object.values(this.elementTree).forEach((element) => {
       element.draw(this.context);
     });
-
-    this.renderCount++;
   };
 }

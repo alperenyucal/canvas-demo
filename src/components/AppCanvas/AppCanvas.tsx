@@ -5,268 +5,11 @@ import { Rectangle } from "../../classes/Elements/Rectangle";
 import { Circle } from "../../classes/Elements/Circle";
 import { TextElement } from "../../classes/Elements/TextElement";
 import { CanvasManager } from "../../classes/CanvasManager/CanvasManager";
+import { CircleEditor } from "./CircleEditor";
+import { RectangleEditor } from "./RectangleEditor";
+import { TextEditor } from "./TextElementEditor";
 
-const RectangleEditor: React.FC<{
-  rectangle: Rectangle;
-  manager: CanvasManager;
-}> = ({ rectangle, manager }) => {
-  return (
-    <>
-      <label>
-        Width
-        <input
-          defaultValue={rectangle.width}
-          type="number"
-          onChange={(event) => {
-            manager.updateRectangleProperties({
-              width: Number(event.target.value),
-            });
-          }}
-        />
-      </label>
-      <label>
-        Height
-        <input
-          defaultValue={rectangle.height}
-          type="number"
-          onChange={(event) => {
-            manager.updateRectangleProperties({
-              height: Number(event.target.value),
-            });
-          }}
-        />
-      </label>
-      <label>
-        Radius
-        <input
-          defaultValue={rectangle.radius}
-          type="number"
-          onChange={(event) => {
-            manager.updateRectangleProperties({
-              radius: Number(event.target.value),
-            });
-          }}
-        />
-      </label>
-      <label>
-        X
-        <input
-          defaultValue={rectangle.x}
-          type="number"
-          onChange={(event) => {
-            manager.updateRectangleProperties({
-              x: Number(event.target.value),
-            });
-          }}
-        />
-      </label>
-      <label>
-        Y
-        <input
-          defaultValue={rectangle.y}
-          type="number"
-          onChange={(event) => {
-            manager.updateRectangleProperties({
-              y: Number(event.target.value),
-            });
-          }}
-        />
-      </label>
-      <label>
-        Fill
-        <input
-          defaultValue={rectangle.fillStyle}
-          type="color"
-          onChange={(event) => {
-            manager.updateRectangleProperties({
-              fillStyle: event.target.value,
-            });
-          }}
-        />
-      </label>
-      <label>
-        Stroke
-        <input
-          defaultValue={rectangle.strokeStyle}
-          type="color"
-          onChange={(event) => {
-            manager.updateRectangleProperties({
-              strokeStyle: event.target.value,
-            });
-          }}
-        />
-      </label>
-      <label>
-        Stroke Width
-        <input
-          defaultValue={rectangle.lineWidth}
-          type="number"
-          onChange={(event) => {
-            manager.updateRectangleProperties({
-              lineWidth: Number(event.target.value),
-            });
-          }}
-        />
-      </label>
-    </>
-  );
-};
-
-const CircleEditor: React.FC<{
-  circle: Circle;
-  manager: CanvasManager;
-}> = ({ circle, manager }) => {
-  return (
-    <>
-      <label>
-        Radius
-        <input
-          defaultValue={circle.r}
-          type="number"
-          onChange={(event) => {
-            manager.updateCircleProperties({
-              r: Number(event.target.value),
-            });
-          }}
-        />
-      </label>
-      <label>
-        X
-        <input
-          defaultValue={circle.cx}
-          type="number"
-          onChange={(event) => {
-            manager.updateCircleProperties({
-              cx: Number(event.target.value),
-            });
-          }}
-        />
-      </label>
-      <label>
-        Y
-        <input
-          defaultValue={circle.cy}
-          type="number"
-          onChange={(event) => {
-            manager.updateCircleProperties({
-              cy: Number(event.target.value),
-            });
-          }}
-        />
-      </label>
-      <label>
-        Fill
-        <input
-          defaultValue={circle.fillStyle}
-          type="color"
-          onChange={(event) => {
-            manager.updateCircleProperties({
-              fillStyle: event.target.value,
-            });
-          }}
-        />
-      </label>
-      <label>
-        Stroke
-        <input
-          defaultValue={circle.strokeStyle}
-          type="color"
-          onChange={(event) => {
-            manager.updateCircleProperties({
-              strokeStyle: event.target.value,
-            });
-          }}
-        />
-      </label>
-      <label>
-        Stroke Width
-        <input
-          defaultValue={circle.lineWidth}
-          type="number"
-          onChange={(event) => {
-            manager.updateCircleProperties({
-              lineWidth: Number(event.target.value),
-            });
-          }}
-        />
-      </label>
-    </>
-  );
-};
-
-const TextEditor: React.FC<{
-  textElement: TextElement;
-  manager: CanvasManager;
-}> = ({ textElement, manager }) => {
-  return (
-    <>
-      <label>
-        Text
-        <input
-          defaultValue={textElement.text}
-          type="text"
-          onChange={(event) => {
-            manager.updateTextProperties({
-              text: event.target.value,
-            });
-          }}
-        />
-      </label>
-      <label>
-        X
-        <input
-          defaultValue={textElement.x}
-          type="number"
-          onChange={(event) => {
-            manager.updateTextProperties({
-              x: Number(event.target.value),
-            });
-          }}
-        />
-      </label>
-      <label>
-        Y
-        <input
-          defaultValue={textElement.y}
-          type="number"
-          onChange={(event) => {
-            manager.updateTextProperties({
-              y: Number(event.target.value),
-            });
-          }}
-        />
-      </label>
-      <label>
-        Fill
-        <input
-          defaultValue={textElement.fillStyle}
-          type="color"
-          onChange={(event) => {
-            manager.updateTextProperties({
-              fillStyle: event.target.value,
-            });
-          }}
-        />
-      </label>
-      <label>
-        Font Size
-        <input
-          defaultValue={textElement.fontSize}
-          type="number"
-          onChange={(event) => {
-            manager.updateTextProperties({
-              fontSize: Number(event.target.value),
-            });
-          }}
-        />
-      </label>
-    </>
-  );
-};
-
-interface AppCanvasProps {}
-
-export const AppCanvas: React.FC<AppCanvasProps> = () => {
+export const AppCanvas: React.FC = () => {
   const elementTreeCanvasRef = useRef<HTMLCanvasElement>(null);
   const actionCanvasRef = useRef<HTMLCanvasElement>(null);
   const [mode, setMode] = useState("draw");
@@ -295,27 +38,31 @@ export const AppCanvas: React.FC<AppCanvasProps> = () => {
 
     let isMouseDown = false;
 
-    let mouseDownPosition: { dx: number; dy: number } | undefined;
+    let diff = { dx: 0, dy: 0 };
 
     const downListener = () => {
       isMouseDown = true;
       manager.selectElementAtPosition();
-      mouseDownPosition = manager.selectedElement?.getDiff(
+      diff = manager.selectedElement?.getDiff(
         manager.mousePosition.x,
         manager.mousePosition.y
-      );
+      ) || { dx: 0, dy: 0 };
     };
-    actionCanvas.addEventListener("mousedown", downListener);
+
     const moveListener = () => {
       if (!isMouseDown) return;
-      if (!mouseDownPosition) return;
-      manager.moveElement(mouseDownPosition.dx, mouseDownPosition.dy);
+      if (!diff) return;
+      manager.moveSelectedElement(diff.dx, diff.dy);
     };
-    actionCanvas.addEventListener("mousemove", moveListener);
+
     const upListener = () => {
       isMouseDown = false;
     };
+
+    actionCanvas.addEventListener("mousedown", downListener);
+    actionCanvas.addEventListener("mousemove", moveListener);
     actionCanvas.addEventListener("mouseup", upListener);
+
     return () => {
       actionCanvas.removeEventListener("mousedown", downListener);
       actionCanvas.removeEventListener("mousemove", moveListener);

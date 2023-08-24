@@ -1,8 +1,7 @@
 import _ from "lodash";
 
 export class BaseRenderer {
-  // renderCount = 0;
-  // fps = 120;
+  renderCount = 0;
 
   constructor(public canvas: HTMLCanvasElement) {
     this.resizeCanvas();
@@ -13,24 +12,27 @@ export class BaseRenderer {
     return this.canvas.getContext("2d")!;
   }
 
-  setDPI(dpi: number) {
-    // Set up CSS size.
-    this.canvas.style.width =
-      this.canvas.style.width || this.canvas.width + "px";
-    this.canvas.style.height =
-      this.canvas.style.height || this.canvas.height + "px";
+  setDPR() {
+    // Get the DPR and size of the canvas
+    const dpr = window.devicePixelRatio;
+    const rect = this.canvas.getBoundingClientRect();
 
-    // Resize canvas and scale future draws.
-    const scaleFactor = dpi / 96;
-    this.canvas.width = Math.ceil(this.canvas.width * scaleFactor);
-    this.canvas.height = Math.ceil(this.canvas.height * scaleFactor);
-    this.context.scale(scaleFactor, scaleFactor);
+    // Set the "actual" size of the canvas
+    this.canvas.width = rect.width * dpr;
+    this.canvas.height = rect.height * dpr;
+
+    // Scale the context to ensure correct drawing operations
+    this.context.scale(dpr, dpr);
+
+    // Set the "drawn" size of the canvas
+    this.canvas.style.width = `${rect.width}px`;
+    this.canvas.style.height = `${rect.height}px`;
   }
 
   resizeCanvas() {
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
-    this.setDPI(324);
+    this.setDPR();
     this.render();
   }
 
@@ -44,15 +46,9 @@ export class BaseRenderer {
       throw new Error("draw() method not implemented");
   }
 
-  // render = _.throttle(() => {
-  //   this.clear();
-  //   this.draw();
-  //   this.renderCount++;
-  // }, 1000 / this.fps);
-
   render() {
     this.clear();
     this.draw();
-    // this.renderCount++;
+    this.renderCount++;
   }
 }

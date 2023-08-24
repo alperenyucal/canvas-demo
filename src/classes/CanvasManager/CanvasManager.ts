@@ -8,7 +8,7 @@ import { ElementTreeRenderer } from "../Renderers/ElementTreeRenderer";
 const elementTree: Record<string, CanvasElement> = {};
 
 export class CanvasManager {
-  mousePosition: { x: number; y: number } = { x: 0, y: 0 };
+  _mousePosition: { x: number; y: number } = { x: 0, y: 0 };
   elementTree: Record<string, CanvasElement>;
   elementTreeRenderer: ElementTreeRenderer;
   actionRenderer: ActionRenderer;
@@ -49,6 +49,17 @@ export class CanvasManager {
     this._highlightedElement = element;
   }
 
+  set mousePosition(position: { x: number; y: number }) {
+    this._mousePosition = {
+      x: position.x,
+      y: position.y,
+    };
+  }
+
+  get mousePosition() {
+    return this._mousePosition;
+  }
+
   addElement(element: CanvasElement) {
     this.elementTree[element.id] = element;
     this.selectedElement = element;
@@ -56,7 +67,7 @@ export class CanvasManager {
     this.actionRenderer.render();
   }
 
-  moveElement(dx: number, dy: number) {
+  moveSelectedElement(dx: number, dy: number) {
     if (!this.selectedElement) return;
     this.selectedElement.move(
       this.mousePosition.x - dx,
@@ -105,8 +116,8 @@ export class CanvasManager {
         this.mousePosition.x,
         this.mousePosition.y
       );
+      this.actionRenderer.render();
     }
-    this.actionRenderer.render();
   }
 
   updateElementProperties<T = {}>(properties: Partial<T>) {

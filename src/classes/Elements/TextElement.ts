@@ -1,5 +1,6 @@
 import { nanoid } from "nanoid";
 import { CanvasElement } from "./CanvasElement";
+import { MeasuringRenderer } from "../Renderers/MeasuringRenderer";
 
 export interface TextProperties {
   text: string;
@@ -16,6 +17,7 @@ export class TextElement implements CanvasElement<TextProperties> {
   text: string;
   fontSize?: number;
   fillStyle?: string;
+  measuringRenderer: MeasuringRenderer;
 
   constructor(properties: TextProperties) {
     this.id = nanoid();
@@ -24,6 +26,7 @@ export class TextElement implements CanvasElement<TextProperties> {
     this.x = x;
     this.y = y;
     this.setProperties(rest);
+    this.measuringRenderer = MeasuringRenderer.getInstance();
   }
 
   setProperties(properties: Partial<TextProperties>): void {
@@ -37,8 +40,11 @@ export class TextElement implements CanvasElement<TextProperties> {
     context.fillText(this.text, this.x, this.y);
   }
 
-  isPointInside(x: number, y: number, context: CanvasRenderingContext2D) {
-    const width = context.measureText(this.text).width;
+  isPointInside(x: number, y: number) {
+    const width = this.measuringRenderer.measureText(
+      this.text,
+      this.fontSize || 16
+    ).width;
     const height = this.fontSize || 16;
 
     return (
@@ -48,7 +54,10 @@ export class TextElement implements CanvasElement<TextProperties> {
 
   highlight(context: CanvasRenderingContext2D) {
     context.beginPath();
-    const width = context.measureText(this.text).width;
+    const width = this.measuringRenderer.measureText(
+      this.text,
+      this.fontSize || 16
+    ).width;
     const height = this.fontSize || 16;
     context.rect(this.x - 1, this.y - 1 - height, width + 1, height + 1);
     context.strokeStyle = "rgba(30, 139, 195, 0.5)";
@@ -58,7 +67,10 @@ export class TextElement implements CanvasElement<TextProperties> {
 
   select(context: CanvasRenderingContext2D) {
     context.beginPath();
-    const width = context.measureText(this.text).width;
+    const width = this.measuringRenderer.measureText(
+      this.text,
+      this.fontSize || 16
+    ).width;
     const height = this.fontSize || 16;
     context.rect(this.x, this.y - height, width, height);
     context.fillStyle = "rgba(30, 139, 195, 0.5)";
