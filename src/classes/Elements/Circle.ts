@@ -25,6 +25,22 @@ export class Circle implements Shape<CircleProperties> {
     this.setProperties(rest);
   }
 
+  get x() {
+    return this.cx - this.r;
+  }
+
+  get y() {
+    return this.cy - this.r;
+  }
+
+  get width() {
+    return 2 * this.r;
+  }
+
+  get height() {
+    return 2 * this.r;
+  }
+
   getDiff(x: number, y: number): { dx: number; dy: number } {
     return { dx: x - this.cx, dy: y - this.cy };
   }

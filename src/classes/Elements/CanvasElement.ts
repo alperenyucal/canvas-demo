@@ -1,5 +1,9 @@
 export type CanvasElement<T = {}> = T & {
   id: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
   draw(context: CanvasRenderingContext2D): void;
   highlight(context: CanvasRenderingContext2D): void;
   select(context: CanvasRenderingContext2D): void;

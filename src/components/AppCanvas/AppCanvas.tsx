@@ -8,13 +8,14 @@ import { CanvasManager } from "../../classes/CanvasManager/CanvasManager";
 import { CircleEditor } from "./CircleEditor";
 import { RectangleEditor } from "./RectangleEditor";
 import { TextEditor } from "./TextElementEditor";
+import { Group } from "../../classes/Elements/Group";
 
 export const AppCanvas: React.FC = () => {
   const elementTreeCanvasRef = useRef<HTMLCanvasElement>(null);
   const actionCanvasRef = useRef<HTMLCanvasElement>(null);
   const [mode, setMode] = useState("draw");
   const [selectedShape, setSelectedShape] = useState<
-    "circle" | "rectangle" | "text"
+    "circle" | "rectangle" | "text" | "group"
   >();
   const [manager, setRenderer] = useState<CanvasManager>();
   const [selectedElement, setSelectedElement] = useState<Shape | null>();
@@ -111,6 +112,24 @@ export const AppCanvas: React.FC = () => {
                 text: "Hello World",
               });
               manager.addElement(text);
+            } else if (selectedShape === "group") {
+              const group = new Group([
+                new Circle({
+                  r: 15,
+                  cx: manager.mousePosition.x,
+                  cy: manager.mousePosition.y,
+                }),
+                new Rectangle({
+                  ...manager.mousePosition,
+                  width: 30,
+                  height: 30,
+                }),
+                new TextElement({
+                  ...manager.mousePosition,
+                  text: "Group",
+                }),
+              ]);
+              manager.addElement(group);
             }
           }
           if (mode === "select") {
@@ -166,6 +185,15 @@ export const AppCanvas: React.FC = () => {
           }}
         >
           T
+        </Button>
+        <Button
+          active={mode === "draw" && selectedShape === "group"}
+          onClick={() => {
+            setMode("draw");
+            setSelectedShape("group");
+          }}
+        >
+          G
         </Button>
       </div>
       <div className="absolute bottom-0 left-0 p-2 bg-white flex flex-col gap-2">
