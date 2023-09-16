@@ -2,10 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import { Shape } from "../../classes/Elements/Shape";
 import { Button } from "../Button";
 import { Rectangle } from "../../classes/Elements/Rectangle";
-import { Circle } from "../../classes/Elements/Circle";
+import { Ellipse } from "../../classes/Elements/Ellipse";
 import { TextElement } from "../../classes/Elements/TextElement";
 import { CanvasManager } from "../../classes/CanvasManager/CanvasManager";
-import { CircleEditor } from "./CircleEditor";
+import { EllipseEditor } from "./EllipseEditor";
 import { RectangleEditor } from "./RectangleEditor";
 import { TextEditor } from "./TextElementEditor";
 import { Group } from "../../classes/Elements/Group";
@@ -15,7 +15,7 @@ export const AppCanvas: React.FC = () => {
   const actionCanvasRef = useRef<HTMLCanvasElement>(null);
   const [mode, setMode] = useState("draw");
   const [selectedShape, setSelectedShape] = useState<
-    "circle" | "rectangle" | "text" | "group"
+    "ellipse" | "rectangle" | "text" | "group"
   >();
   const [manager, setRenderer] = useState<CanvasManager>();
   const [selectedElement, setSelectedElement] = useState<Shape | null>();
@@ -87,13 +87,14 @@ export const AppCanvas: React.FC = () => {
           if (!manager) return;
           if (mode === "draw") {
             if (!selectedShape) return;
-            if (selectedShape === "circle") {
-              const circle = new Circle({
-                r: 50,
-                cx: manager.mousePosition.x,
-                cy: manager.mousePosition.y,
+            if (selectedShape === "ellipse") {
+              const ellipse = new Ellipse({
+                x: manager.mousePosition.x,
+                y: manager.mousePosition.y,
+                width: 100,
+                height: 100,
               });
-              manager.addElement(circle);
+              manager.addElement(ellipse);
             } else if (selectedShape === "rectangle") {
               const rectangle = new Rectangle({
                 ...manager.mousePosition,
@@ -108,10 +109,11 @@ export const AppCanvas: React.FC = () => {
               });
               manager.addElement(text);
             } else if (selectedShape === "group") {
-              const circle = new Circle({
-                cx: manager.mousePosition.x,
-                cy: manager.mousePosition.y,
-                r: 50,
+              const ellipse = new Ellipse({
+                x: manager.mousePosition.x + 100,
+                y: manager.mousePosition.y + 100,
+                width: 100,
+                height: 100,
                 fillStyle: "red",
               });
 
@@ -121,9 +123,7 @@ export const AppCanvas: React.FC = () => {
                 height: 100,
               });
 
-              const group = new Group([]);
-              group.addChild(circle);
-              group.addChild(rectangle);
+              const group = new Group([rectangle, ellipse]);
 
               manager.addElement(group);
             }
@@ -156,10 +156,10 @@ export const AppCanvas: React.FC = () => {
           Delete
         </Button>
         <Button
-          active={mode === "draw" && selectedShape === "circle"}
+          active={mode === "draw" && selectedShape === "ellipse"}
           onClick={() => {
             setMode("draw");
-            setSelectedShape("circle");
+            setSelectedShape("ellipse");
           }}
         >
           ○
@@ -226,11 +226,11 @@ export const AppCanvas: React.FC = () => {
       <div className="absolute top-0 right-0 p-2 bg-white flex flex-col gap-2">
         {(() => {
           if (manager && selectedElement) {
-            if (selectedElement instanceof Circle) {
+            if (selectedElement instanceof Ellipse) {
               return (
-                <CircleEditor
+                <EllipseEditor
                   key={selectedElement.id}
-                  circle={selectedElement}
+                  ellipse={selectedElement}
                   manager={manager}
                 />
               );

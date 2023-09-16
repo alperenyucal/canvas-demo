@@ -7,23 +7,19 @@ export class Group implements CanvasElement {
   y: number;
   width: number;
   height: number;
-  children: { element: CanvasElement; relativeX: number; relativeY: number }[];
 
-  constructor(
-    children: { element: CanvasElement; relativeX: number; relativeY: number }[]
-  ) {
+  constructor(public elements: CanvasElement[]) {
     this.id = nanoid();
-    this.children = children;
-    this.x = Math.min(...children.map((child) => child.element.x));
-    this.y = Math.min(...children.map((child) => child.element.y));
+
+    this.x = Math.min(...elements.map((element) => element.x));
+    this.y = Math.min(...elements.map((element) => element.y));
+
     this.width =
-      Math.max(
-        ...children.map((child) => child.element.x + child.element.width)
-      ) - this.x;
+      Math.max(...elements.map((element) => element.x + element.width)) -
+      this.x;
     this.height =
-      Math.max(
-        ...children.map((child) => child.element.y + child.element.height)
-      ) - this.y;
+      Math.max(...elements.map((element) => element.y + element.height)) -
+      this.y;
   }
 
   select(context: CanvasRenderingContext2D): void {
@@ -40,7 +36,7 @@ export class Group implements CanvasElement {
     this.height = Math.max(this.height, relativeY + element.height);
     this.x = Math.min(this.x, element.x);
     this.y = Math.min(this.y, element.y);
-    this.children.push({ element, relativeX, relativeY });
+    this.elements.push(element);
   }
 
   getDiff(x: number, y: number): { dx: number; dy: number } {
@@ -48,7 +44,7 @@ export class Group implements CanvasElement {
   }
 
   draw(context: CanvasRenderingContext2D) {
-    this.children.forEach((child) => child.element.draw(context));
+    this.elements.forEach((element) => element.draw(context));
   }
 
   isPointInside(x: number, y: number) {
@@ -68,9 +64,9 @@ export class Group implements CanvasElement {
   }
 
   move(x: number, y: number) {
-    this.children.forEach((child) =>
-      child.element.move(child.relativeX + x, child.relativeY + y)
-    );
+    this.elements.forEach((element) => {
+      element.move(x + element.x - this.x, y + element.y - this.y);
+    });
     this.x = x;
     this.y = y;
   }

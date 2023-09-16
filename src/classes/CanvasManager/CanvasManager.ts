@@ -1,5 +1,5 @@
 import { CanvasElement } from "../Elements/CanvasElement";
-import { Circle, CircleProperties } from "../Elements/Circle";
+import { Ellipse, EllipseProperties } from "../Elements/Ellipse";
 import { Rectangle, RectangleProperties } from "../Elements/Rectangle";
 import { TextElement, TextProperties } from "../Elements/TextElement";
 import { ActionRenderer } from "../Renderers/ActionRenderer";
@@ -135,10 +135,10 @@ export class CanvasManager {
     this.updateElementProperties<RectangleProperties>(properties);
   }
 
-  updateCircleProperties(properties: Partial<CircleProperties>) {
-    if (!this.selectedElement || !(this.selectedElement instanceof Circle))
+  updateEllipseProperties(properties: Partial<EllipseProperties>) {
+    if (!this.selectedElement || !(this.selectedElement instanceof Ellipse))
       return;
-    this.updateElementProperties<CircleProperties>(properties);
+    this.updateElementProperties<EllipseProperties>(properties);
   }
 
   updateTextProperties(properties: Partial<TextProperties>) {
@@ -162,8 +162,8 @@ export class CanvasManager {
         case "rectangle":
           this.addElement(new Rectangle(element), false);
           break;
-        case "circle":
-          this.addElement(new Circle(element), false);
+        case "ellipse":
+          this.addElement(new Ellipse(element), false);
           break;
         case "text":
           this.addElement(new TextElement(element), false);

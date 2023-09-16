@@ -29,13 +29,13 @@ const generateRandomRectangle = () => {
   return { x, y, width, height, fillStyle, type: "rectangle" };
 };
 
-const generateRandomCircle = () => {
+const generateRandomEllipse = () => {
   const cx = Math.floor(Math.random() * vw);
   const cy = Math.floor(Math.random() * vh);
   const r = Math.floor(Math.random() * maxWidth);
   const fillStyle =
     colorPalette[Math.floor(Math.random() * colorPalette.length)];
-  return { cx, cy, r, fillStyle, type: "circle" };
+  return { cx, cy, r, fillStyle, type: "ellipse" };
 };
 
 const generateRandomTextElement = () => {
@@ -55,7 +55,7 @@ const mockGen = () => {
       elements.push(generateRandomRectangle());
     }
     // else if (rand < 0.66) {
-    //   elements.push(generateRandomCircle());
+    //   elements.push(generateRandomEllipse());
     // }
     else {
       elements.push(generateRandomTextElement());

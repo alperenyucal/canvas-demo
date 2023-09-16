@@ -1,32 +1,20 @@
 import { CanvasManager } from "../../classes/CanvasManager/CanvasManager";
-import { Circle } from "../../classes/Elements/Circle";
+import { Ellipse } from "../../classes/Elements/Ellipse";
 
-export const CircleEditor: React.FC<{
-  circle: Circle;
+export const EllipseEditor: React.FC<{
+  ellipse: Ellipse;
   manager: CanvasManager;
-}> = ({ circle, manager }) => {
+}> = ({ ellipse, manager }) => {
   return (
     <>
       <label>
-        Radius
-        <input
-          defaultValue={circle.r}
-          type="number"
-          onChange={(event) => {
-            manager.updateCircleProperties({
-              r: Number(event.target.value),
-            });
-          }}
-        />
-      </label>
-      <label>
         X
         <input
-          defaultValue={circle.cx}
+          defaultValue={ellipse.cx}
           type="number"
           onChange={(event) => {
-            manager.updateCircleProperties({
-              cx: Number(event.target.value),
+            manager.updateEllipseProperties({
+              x: Number(event.target.value),
             });
           }}
         />
@@ -34,11 +22,11 @@ export const CircleEditor: React.FC<{
       <label>
         Y
         <input
-          defaultValue={circle.cy}
+          defaultValue={ellipse.cy}
           type="number"
           onChange={(event) => {
-            manager.updateCircleProperties({
-              cy: Number(event.target.value),
+            manager.updateEllipseProperties({
+              y: Number(event.target.value),
             });
           }}
         />
@@ -46,10 +34,10 @@ export const CircleEditor: React.FC<{
       <label>
         Fill
         <input
-          defaultValue={circle.fillStyle}
+          defaultValue={ellipse.fillStyle}
           type="color"
           onChange={(event) => {
-            manager.updateCircleProperties({
+            manager.updateEllipseProperties({
               fillStyle: event.target.value,
             });
           }}
@@ -58,10 +46,10 @@ export const CircleEditor: React.FC<{
       <label>
         Stroke
         <input
-          defaultValue={circle.strokeStyle}
+          defaultValue={ellipse.strokeStyle}
           type="color"
           onChange={(event) => {
-            manager.updateCircleProperties({
+            manager.updateEllipseProperties({
               strokeStyle: event.target.value,
             });
           }}
@@ -70,10 +58,10 @@ export const CircleEditor: React.FC<{
       <label>
         Stroke Width
         <input
-          defaultValue={circle.lineWidth}
+          defaultValue={ellipse.lineWidth}
           type="number"
           onChange={(event) => {
-            manager.updateCircleProperties({
+            manager.updateEllipseProperties({
               lineWidth: Number(event.target.value),
             });
           }}
