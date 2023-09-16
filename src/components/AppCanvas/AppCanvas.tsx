@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Shape } from "../../classes/Elements/Shape";
 import { Button } from "../Button";
 import { Rectangle } from "../../classes/Elements/Rectangle";
@@ -19,11 +19,6 @@ export const AppCanvas: React.FC = () => {
   >();
   const [manager, setRenderer] = useState<CanvasManager>();
   const [selectedElement, setSelectedElement] = useState<Shape | null>();
-
-  const elementTree = useMemo(() => {
-    if (!manager) return null;
-    return manager.elementTree;
-  }, [manager?.elementTree]);
 
   useEffect(() => {
     if (!elementTreeCanvasRef.current || !actionCanvasRef.current) return;
@@ -113,22 +108,23 @@ export const AppCanvas: React.FC = () => {
               });
               manager.addElement(text);
             } else if (selectedShape === "group") {
-              const group = new Group([
-                new Circle({
-                  r: 15,
-                  cx: manager.mousePosition.x,
-                  cy: manager.mousePosition.y,
-                }),
-                new Rectangle({
-                  ...manager.mousePosition,
-                  width: 30,
-                  height: 30,
-                }),
-                new TextElement({
-                  ...manager.mousePosition,
-                  text: "Group",
-                }),
-              ]);
+              const circle = new Circle({
+                cx: manager.mousePosition.x,
+                cy: manager.mousePosition.y,
+                r: 50,
+                fillStyle: "red",
+              });
+
+              const rectangle = new Rectangle({
+                ...manager.mousePosition,
+                width: 100,
+                height: 100,
+              });
+
+              const group = new Group([]);
+              group.addChild(circle);
+              group.addChild(rectangle);
+
               manager.addElement(group);
             }
           }
@@ -196,20 +192,33 @@ export const AppCanvas: React.FC = () => {
           G
         </Button>
       </div>
-      <div className="absolute bottom-0 left-0 p-2 bg-white flex flex-col gap-2">
-        {elementTree &&
-          Object.entries(elementTree)?.map(([id, element]) => {
+      <div className="absolute top-20 left-0 p-2 bg-white flex flex-col gap-2">
+        {/* recursice tree render */}
+        {manager?.elementTree &&
+          Object.values(manager?.elementTree).map((element) => {
             return (
-              <div key={id}>
-                <button
+              <div
+                key={element.id}
+                className={`flex gap-2 ${
+                  element === selectedElement ? "bg-gray-100" : ""
+                }`}
+                onClick={() => {
+                  if (!manager) return;
+                  manager.selectElement(element);
+                  setSelectedElement(element);
+                }}
+              >
+                <div>{element.constructor.name}</div>
+                <div
+                  className="cursor-pointer"
                   onClick={() => {
                     if (!manager) return;
-                    manager.selectElement(element);
-                    setSelectedElement(manager.selectedElement);
+                    manager.removeElement(element);
+                    setSelectedElement(null);
                   }}
                 >
-                  {element.constructor.name}
-                </button>
+                  x
+                </div>
               </div>
             );
           })}

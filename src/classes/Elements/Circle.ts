@@ -5,6 +5,8 @@ export interface CircleProperties extends ShapeProperties {
   r: number;
   cx: number;
   cy: number;
+  x?: number;
+  y?: number;
 }
 
 export class Circle implements Shape<CircleProperties> {
@@ -29,8 +31,16 @@ export class Circle implements Shape<CircleProperties> {
     return this.cx - this.r;
   }
 
+  set x(x: number) {
+    this.cx = x + this.r;
+  }
+
   get y() {
     return this.cy - this.r;
+  }
+
+  set y(y: number) {
+    this.cy = y + this.r;
   }
 
   get width() {
@@ -42,7 +52,7 @@ export class Circle implements Shape<CircleProperties> {
   }
 
   getDiff(x: number, y: number): { dx: number; dy: number } {
-    return { dx: x - this.cx, dy: y - this.cy };
+    return { dx: x - this.x, dy: y - this.y };
   }
 
   draw(context: CanvasRenderingContext2D) {
@@ -79,8 +89,8 @@ export class Circle implements Shape<CircleProperties> {
   }
 
   move(x: number, y: number) {
-    this.cx = x;
-    this.cy = y;
+    this.x = x;
+    this.y = y;
   }
 
   resize(x: number, y: number) {

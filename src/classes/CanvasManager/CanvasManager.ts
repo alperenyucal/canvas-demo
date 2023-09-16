@@ -4,8 +4,7 @@ import { Rectangle, RectangleProperties } from "../Elements/Rectangle";
 import { TextElement, TextProperties } from "../Elements/TextElement";
 import { ActionRenderer } from "../Renderers/ActionRenderer";
 import { ElementTreeRenderer } from "../Renderers/ElementTreeRenderer";
-
-const elementTree: Record<string, CanvasElement> = {};
+import savedElements from "./mock-data.json";
 
 export class CanvasManager {
   _mousePosition: { x: number; y: number } = { x: 0, y: 0 };
@@ -19,7 +18,7 @@ export class CanvasManager {
     elementTreeCanvas: HTMLCanvasElement,
     actionCanvas: HTMLCanvasElement
   ) {
-    this.elementTree = elementTree;
+    this.elementTree = {};
     this.elementTreeRenderer = new ElementTreeRenderer(
       elementTreeCanvas,
       this.elementTree
@@ -29,6 +28,7 @@ export class CanvasManager {
       this.selectedElement,
       this.highlightedElement
     );
+    // this.loadElements();
   }
 
   get selectedElement() {
@@ -60,11 +60,13 @@ export class CanvasManager {
     return this._mousePosition;
   }
 
-  addElement(element: CanvasElement) {
+  addElement(element: CanvasElement, renderingAllowed: boolean = true) {
     this.elementTree[element.id] = element;
     this.selectedElement = element;
-    this.elementTreeRenderer.render();
-    this.actionRenderer.render();
+    if (renderingAllowed) {
+      this.elementTreeRenderer.render();
+      this.actionRenderer.render();
+    }
   }
 
   moveSelectedElement(dx: number, dy: number) {
@@ -143,5 +145,33 @@ export class CanvasManager {
     if (!this.selectedElement || !(this.selectedElement instanceof TextElement))
       return;
     this.updateElementProperties<TextProperties>(properties);
+  }
+
+  async loadElements() {
+    const yieldToMain = () => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(0);
+        }, 0);
+      });
+    };
+
+    while (savedElements.length > 0) {
+      const element: any = savedElements.shift();
+      switch (element.type) {
+        case "rectangle":
+          this.addElement(new Rectangle(element), false);
+          break;
+        case "circle":
+          this.addElement(new Circle(element), false);
+          break;
+        case "text":
+          this.addElement(new TextElement(element), false);
+          break;
+      }
+      await yieldToMain();
+    }
+    this.elementTreeRenderer.render();
+    this.actionRenderer.render();
   }
 }
