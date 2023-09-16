@@ -10,7 +10,7 @@ export const EllipseEditor: React.FC<{
       <label>
         X
         <input
-          defaultValue={ellipse.cx}
+          defaultValue={ellipse.x}
           type="number"
           onChange={(event) => {
             manager.updateEllipseProperties({
@@ -22,11 +22,35 @@ export const EllipseEditor: React.FC<{
       <label>
         Y
         <input
-          defaultValue={ellipse.cy}
+          defaultValue={ellipse.y}
           type="number"
           onChange={(event) => {
             manager.updateEllipseProperties({
               y: Number(event.target.value),
+            });
+          }}
+        />
+      </label>
+      <label>
+        Width
+        <input
+          defaultValue={ellipse.width}
+          type="number"
+          onChange={(event) => {
+            manager.updateEllipseProperties({
+              width: Number(event.target.value),
+            });
+          }}
+        />
+      </label>
+      <label>
+        Height
+        <input
+          defaultValue={ellipse.height}
+          type="number"
+          onChange={(event) => {
+            manager.updateEllipseProperties({
+              height: Number(event.target.value),
             });
           }}
         />

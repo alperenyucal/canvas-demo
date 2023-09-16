@@ -192,7 +192,7 @@ export const AppCanvas: React.FC = () => {
           G
         </Button>
       </div>
-      <div className="absolute top-20 left-0 p-2 bg-white flex flex-col gap-2">
+      <div className="absolute top-20 left-0 p-2 bg-white flex flex-col gap-2 overflow-auto max-h-screen">
         {/* recursice tree render */}
         {manager?.elementTree &&
           Object.values(manager?.elementTree).map((element) => {

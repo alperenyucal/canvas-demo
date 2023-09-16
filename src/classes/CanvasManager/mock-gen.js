@@ -5,7 +5,7 @@ const vh = 900;
 const maxWidth = 100;
 const maxHeight = 100;
 
-const elementCount = 3000;
+const elementCount = 5000;
 
 const colorPalette = [
   "red",
