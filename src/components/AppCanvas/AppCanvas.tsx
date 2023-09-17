@@ -9,6 +9,7 @@ import { EllipseEditor } from "./EllipseEditor";
 import { RectangleEditor } from "./RectangleEditor";
 import { TextEditor } from "./TextElementEditor";
 import { Group } from "../../classes/Elements/Group";
+import { CanvasDragEvent } from "../../lib/DragEvent";
 
 export const AppCanvas: React.FC = () => {
   const elementTreeCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -48,6 +49,15 @@ export const AppCanvas: React.FC = () => {
     const moveListener = () => {
       if (!isMouseDown) return;
       if (!diff) return;
+      actionCanvas.dispatchEvent(
+        new CanvasDragEvent("drag", {
+          start: {
+            x: manager.mousePosition.x - diff.dx,
+            y: manager.mousePosition.y - diff.dy,
+          },
+          mousePosition: manager.mousePosition,
+        })
+      );
       manager.moveSelectedElement(diff.dx, diff.dy);
     };
 
@@ -58,6 +68,7 @@ export const AppCanvas: React.FC = () => {
     actionCanvas.addEventListener("mousedown", downListener);
     actionCanvas.addEventListener("mousemove", moveListener);
     actionCanvas.addEventListener("mouseup", upListener);
+    actionCanvas.addEventListener("drag", () => {});
 
     return () => {
       actionCanvas.removeEventListener("mousedown", downListener);
@@ -137,7 +148,7 @@ export const AppCanvas: React.FC = () => {
         }}
         onMouseMove={handleMouseMove}
       />
-      <div className="absolute top-0 left-0 p-2 bg-white flex gap-2">
+      <div className="absolute top-0 left-0 p-2 bg-white flex gap-2 rounded-lg m-2">
         <Button
           active={mode === "select"}
           onClick={() => {
@@ -192,14 +203,14 @@ export const AppCanvas: React.FC = () => {
           G
         </Button>
       </div>
-      <div className="absolute top-20 left-0 p-2 bg-white flex flex-col gap-2 overflow-auto max-h-screen">
-        {/* recursice tree render */}
-        {manager?.elementTree &&
-          Object.values(manager?.elementTree).map((element) => {
+      {manager?.elementTree && Object.keys(manager.elementTree).length > 0 && (
+        <div className="absolute top-14 left-0 p-2 bg-white flex flex-col gap-2 overflow-auto max-h-screen rounded-lg m-2">
+          {/* recursice tree render */}
+          {Object.values(manager.elementTree).map((element) => {
             return (
               <div
                 key={element.id}
-                className={`flex gap-2 ${
+                className={`flex gap-2 justify-between ${
                   element === selectedElement ? "bg-gray-100" : ""
                 }`}
                 onClick={() => {
@@ -222,8 +233,9 @@ export const AppCanvas: React.FC = () => {
               </div>
             );
           })}
-      </div>
-      <div className="absolute top-0 right-0 p-2 bg-white flex flex-col gap-2">
+        </div>
+      )}
+      <div className="absolute top-0 right-0 p-2 bg-white flex flex-col gap-2 rounded-lg m-2">
         {(() => {
           if (manager && selectedElement) {
             if (selectedElement instanceof Ellipse) {

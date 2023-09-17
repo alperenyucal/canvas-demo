@@ -1,108 +1,122 @@
 import { CanvasManager } from "../../classes/CanvasManager/CanvasManager";
 import { Rectangle } from "../../classes/Elements/Rectangle";
 
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
+
+const Input = (props: InputProps) => (
+  <input
+    type="text"
+    {...props}
+    className="border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 block sm:text-sm w-20"
+  />
+);
+
 export const RectangleEditor: React.FC<{
   rectangle: Rectangle;
   manager: CanvasManager;
 }> = ({ rectangle, manager }) => {
   return (
     <>
-      <label>
-        Width
-        <input
-          defaultValue={rectangle.width}
-          type="number"
-          onChange={(event) => {
-            manager.updateRectangleProperties({
-              width: Number(event.target.value),
-            });
-          }}
-        />
-      </label>
-      <label>
-        Height
-        <input
-          defaultValue={rectangle.height}
-          type="number"
-          onChange={(event) => {
-            manager.updateRectangleProperties({
-              height: Number(event.target.value),
-            });
-          }}
-        />
-      </label>
-      <label>
-        Radius
-        <input
-          defaultValue={rectangle.radius}
-          type="number"
-          onChange={(event) => {
-            manager.updateRectangleProperties({
-              radius: Number(event.target.value),
-            });
-          }}
-        />
-      </label>
-      <label>
-        X
-        <input
-          defaultValue={rectangle.x}
-          type="number"
-          onChange={(event) => {
-            manager.updateRectangleProperties({
-              x: Number(event.target.value),
-            });
-          }}
-        />
-      </label>
-      <label>
-        Y
-        <input
-          defaultValue={rectangle.y}
-          type="number"
-          onChange={(event) => {
-            manager.updateRectangleProperties({
-              y: Number(event.target.value),
-            });
-          }}
-        />
-      </label>
-      <label>
-        Fill
-        <input
-          defaultValue={rectangle.fillStyle}
-          type="color"
-          onChange={(event) => {
-            manager.updateRectangleProperties({
-              fillStyle: event.target.value,
-            });
-          }}
-        />
-      </label>
-      <label>
-        Stroke
-        <input
-          defaultValue={rectangle.strokeStyle}
-          type="color"
-          onChange={(event) => {
-            manager.updateRectangleProperties({
-              strokeStyle: event.target.value,
-            });
-          }}
-        />
-      </label>
-      <label>
-        Stroke Width
-        <input
-          defaultValue={rectangle.lineWidth}
-          type="number"
-          onChange={(event) => {
-            manager.updateRectangleProperties({
-              lineWidth: Number(event.target.value),
-            });
-          }}
-        />
-      </label>
+      <div className="grid grid-cols-2 gap-2">
+        <label className="flex gap-2 justify-between">
+          W
+          <Input
+            defaultValue={rectangle.width}
+            type="number"
+            onChange={(event) => {
+              manager.updateRectangleProperties({
+                width: Number(event.target.value),
+              });
+            }}
+          />
+        </label>
+        <label className="flex gap-2 justify-between">
+          H
+          <Input
+            defaultValue={rectangle.height}
+            type="number"
+            onChange={(event) => {
+              manager.updateRectangleProperties({
+                height: Number(event.target.value),
+              });
+            }}
+          />
+        </label>
+        <label className="flex gap-2 justify-between">
+          X
+          <Input
+            defaultValue={rectangle.x}
+            type="number"
+            onChange={(event) => {
+              manager.updateRectangleProperties({
+                x: Number(event.target.value),
+              });
+            }}
+          />
+        </label>
+        <label className="flex gap-2 justify-between">
+          Y
+          <Input
+            defaultValue={rectangle.y}
+            type="number"
+            onChange={(event) => {
+              manager.updateRectangleProperties({
+                y: Number(event.target.value),
+              });
+            }}
+          />
+        </label>
+      </div>
+      <div>
+        <label className="flex gap-2 justify-between">
+          Radius
+          <Input
+            defaultValue={rectangle.radius}
+            type="number"
+            onChange={(event) => {
+              manager.updateRectangleProperties({
+                radius: Number(event.target.value),
+              });
+            }}
+          />
+        </label>
+        <label className="flex gap-2 justify-between">
+          Fill
+          <Input
+            defaultValue={rectangle.fillStyle}
+            type="color"
+            onChange={(event) => {
+              manager.updateRectangleProperties({
+                fillStyle: event.target.value,
+              });
+            }}
+          />
+        </label>
+        <label className="flex gap-2 justify-between">
+          Stroke
+          <Input
+            defaultValue={rectangle.strokeStyle}
+            type="color"
+            onChange={(event) => {
+              manager.updateRectangleProperties({
+                strokeStyle: event.target.value,
+              });
+            }}
+          />
+        </label>
+        <label className="flex gap-2 justify-between">
+          Stroke Width
+          <Input
+            defaultValue={rectangle.lineWidth}
+            type="number"
+            onChange={(event) => {
+              manager.updateRectangleProperties({
+                lineWidth: Number(event.target.value),
+              });
+            }}
+          />
+        </label>
+      </div>
     </>
   );
 };
