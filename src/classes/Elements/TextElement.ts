@@ -29,6 +29,15 @@ export class TextElement implements CanvasElement<TextProperties> {
     this.measuringRenderer = MeasuringRenderer.getInstance();
   }
 
+  get width() {
+    return this.measuringRenderer.measureText(this.text, this.fontSize || 16)
+      .width;
+  }
+
+  get height() {
+    return this.fontSize || 16;
+  }
+
   setProperties(properties: Partial<TextProperties>): void {
     Object.assign(this, properties);
   }

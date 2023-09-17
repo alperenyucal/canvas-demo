@@ -1,5 +1,5 @@
 import { CanvasManager } from "../../classes/CanvasManager/CanvasManager";
-import { Rectangle } from "../../classes/Elements/Rectangle";
+import { Ellipse } from "../../classes/Elements/Ellipse";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
 
@@ -10,21 +10,20 @@ const Input = (props: InputProps) => (
     className="border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 block sm:text-sm w-20"
   />
 );
-
-export const RectangleEditor: React.FC<{
-  rectangle: Rectangle;
+export const EllipseEditor: React.FC<{
+  ellipse: Ellipse;
   manager: CanvasManager;
-}> = ({ rectangle, manager }) => {
+}> = ({ ellipse, manager }) => {
   return (
     <>
       <div className="grid grid-cols-2 gap-2">
         <label className="flex gap-2 justify-between">
           W
           <Input
-            defaultValue={rectangle.width}
+            defaultValue={ellipse.width}
             type="number"
             onChange={(event) => {
-              manager.updateRectangleProperties({
+              manager.updateEllipseProperties({
                 width: Number(event.target.value),
               });
             }}
@@ -33,10 +32,10 @@ export const RectangleEditor: React.FC<{
         <label className="flex gap-2 justify-between">
           H
           <Input
-            defaultValue={rectangle.height}
+            defaultValue={ellipse.height}
             type="number"
             onChange={(event) => {
-              manager.updateRectangleProperties({
+              manager.updateEllipseProperties({
                 height: Number(event.target.value),
               });
             }}
@@ -45,10 +44,10 @@ export const RectangleEditor: React.FC<{
         <label className="flex gap-2 justify-between">
           X
           <Input
-            defaultValue={rectangle.x}
+            defaultValue={ellipse.x}
             type="number"
             onChange={(event) => {
-              manager.updateRectangleProperties({
+              manager.updateEllipseProperties({
                 x: Number(event.target.value),
               });
             }}
@@ -57,10 +56,10 @@ export const RectangleEditor: React.FC<{
         <label className="flex gap-2 justify-between">
           Y
           <Input
-            defaultValue={rectangle.y}
+            defaultValue={ellipse.y}
             type="number"
             onChange={(event) => {
-              manager.updateRectangleProperties({
+              manager.updateEllipseProperties({
                 y: Number(event.target.value),
               });
             }}
@@ -69,24 +68,12 @@ export const RectangleEditor: React.FC<{
       </div>
       <div>
         <label className="flex gap-2 justify-between">
-          Radius
-          <Input
-            defaultValue={rectangle.radius}
-            type="number"
-            onChange={(event) => {
-              manager.updateRectangleProperties({
-                radius: Number(event.target.value),
-              });
-            }}
-          />
-        </label>
-        <label className="flex gap-2 justify-between">
           Fill
           <Input
-            defaultValue={rectangle.fillStyle}
+            defaultValue={ellipse.fillStyle}
             type="color"
             onChange={(event) => {
-              manager.updateRectangleProperties({
+              manager.updateEllipseProperties({
                 fillStyle: event.target.value,
               });
             }}
@@ -95,10 +82,10 @@ export const RectangleEditor: React.FC<{
         <label className="flex gap-2 justify-between">
           Stroke
           <Input
-            defaultValue={rectangle.strokeStyle}
+            defaultValue={ellipse.strokeStyle}
             type="color"
             onChange={(event) => {
-              manager.updateRectangleProperties({
+              manager.updateEllipseProperties({
                 strokeStyle: event.target.value,
               });
             }}
@@ -107,10 +94,10 @@ export const RectangleEditor: React.FC<{
         <label className="flex gap-2 justify-between">
           Stroke Width
           <Input
-            defaultValue={rectangle.lineWidth}
+            defaultValue={ellipse.lineWidth}
             type="number"
             onChange={(event) => {
-              manager.updateRectangleProperties({
+              manager.updateEllipseProperties({
                 lineWidth: Number(event.target.value),
               });
             }}

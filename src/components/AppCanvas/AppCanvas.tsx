@@ -1,28 +1,25 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Shape } from "../../classes/Elements/Shape";
 import { Button } from "../Button";
 import { Rectangle } from "../../classes/Elements/Rectangle";
-import { Circle } from "../../classes/Elements/Circle";
+import { Ellipse } from "../../classes/Elements/Ellipse";
 import { TextElement } from "../../classes/Elements/TextElement";
 import { CanvasManager } from "../../classes/CanvasManager/CanvasManager";
-import { CircleEditor } from "./CircleEditor";
+import { EllipseEditor } from "./EllipseEditor";
 import { RectangleEditor } from "./RectangleEditor";
 import { TextEditor } from "./TextElementEditor";
+import { Group } from "../../classes/Elements/Group";
+import { CanvasDragEvent } from "../../lib/DragEvent";
 
 export const AppCanvas: React.FC = () => {
   const elementTreeCanvasRef = useRef<HTMLCanvasElement>(null);
   const actionCanvasRef = useRef<HTMLCanvasElement>(null);
   const [mode, setMode] = useState("draw");
   const [selectedShape, setSelectedShape] = useState<
-    "circle" | "rectangle" | "text"
+    "ellipse" | "rectangle" | "text" | "group"
   >();
   const [manager, setRenderer] = useState<CanvasManager>();
   const [selectedElement, setSelectedElement] = useState<Shape | null>();
-
-  const elementTree = useMemo(() => {
-    if (!manager) return null;
-    return manager.elementTree;
-  }, [manager?.elementTree]);
 
   useEffect(() => {
     if (!elementTreeCanvasRef.current || !actionCanvasRef.current) return;
@@ -52,6 +49,15 @@ export const AppCanvas: React.FC = () => {
     const moveListener = () => {
       if (!isMouseDown) return;
       if (!diff) return;
+      actionCanvas.dispatchEvent(
+        new CanvasDragEvent("drag", {
+          start: {
+            x: manager.mousePosition.x - diff.dx,
+            y: manager.mousePosition.y - diff.dy,
+          },
+          mousePosition: manager.mousePosition,
+        })
+      );
       manager.moveSelectedElement(diff.dx, diff.dy);
     };
 
@@ -62,6 +68,7 @@ export const AppCanvas: React.FC = () => {
     actionCanvas.addEventListener("mousedown", downListener);
     actionCanvas.addEventListener("mousemove", moveListener);
     actionCanvas.addEventListener("mouseup", upListener);
+    actionCanvas.addEventListener("drag", () => {});
 
     return () => {
       actionCanvas.removeEventListener("mousedown", downListener);
@@ -91,13 +98,14 @@ export const AppCanvas: React.FC = () => {
           if (!manager) return;
           if (mode === "draw") {
             if (!selectedShape) return;
-            if (selectedShape === "circle") {
-              const circle = new Circle({
-                r: 50,
-                cx: manager.mousePosition.x,
-                cy: manager.mousePosition.y,
+            if (selectedShape === "ellipse") {
+              const ellipse = new Ellipse({
+                x: manager.mousePosition.x,
+                y: manager.mousePosition.y,
+                width: 100,
+                height: 100,
               });
-              manager.addElement(circle);
+              manager.addElement(ellipse);
             } else if (selectedShape === "rectangle") {
               const rectangle = new Rectangle({
                 ...manager.mousePosition,
@@ -111,6 +119,24 @@ export const AppCanvas: React.FC = () => {
                 text: "Hello World",
               });
               manager.addElement(text);
+            } else if (selectedShape === "group") {
+              const ellipse = new Ellipse({
+                x: manager.mousePosition.x + 100,
+                y: manager.mousePosition.y + 100,
+                width: 100,
+                height: 100,
+                fillStyle: "red",
+              });
+
+              const rectangle = new Rectangle({
+                ...manager.mousePosition,
+                width: 100,
+                height: 100,
+              });
+
+              const group = new Group([rectangle, ellipse]);
+
+              manager.addElement(group);
             }
           }
           if (mode === "select") {
@@ -122,7 +148,7 @@ export const AppCanvas: React.FC = () => {
         }}
         onMouseMove={handleMouseMove}
       />
-      <div className="absolute top-0 left-0 p-2 bg-white flex gap-2">
+      <div className="absolute top-0 left-0 p-2 bg-white flex gap-2 rounded-lg m-2">
         <Button
           active={mode === "select"}
           onClick={() => {
@@ -141,10 +167,10 @@ export const AppCanvas: React.FC = () => {
           Delete
         </Button>
         <Button
-          active={mode === "draw" && selectedShape === "circle"}
+          active={mode === "draw" && selectedShape === "ellipse"}
           onClick={() => {
             setMode("draw");
-            setSelectedShape("circle");
+            setSelectedShape("ellipse");
           }}
         >
           ○
@@ -167,33 +193,56 @@ export const AppCanvas: React.FC = () => {
         >
           T
         </Button>
+        <Button
+          active={mode === "draw" && selectedShape === "group"}
+          onClick={() => {
+            setMode("draw");
+            setSelectedShape("group");
+          }}
+        >
+          G
+        </Button>
       </div>
-      <div className="absolute bottom-0 left-0 p-2 bg-white flex flex-col gap-2">
-        {elementTree &&
-          Object.entries(elementTree)?.map(([id, element]) => {
+      {manager?.elementTree && Object.keys(manager.elementTree).length > 0 && (
+        <div className="absolute top-14 left-0 p-2 bg-white flex flex-col gap-2 overflow-auto max-h-screen rounded-lg m-2">
+          {/* recursice tree render */}
+          {Object.values(manager.elementTree).map((element) => {
             return (
-              <div key={id}>
-                <button
+              <div
+                key={element.id}
+                className={`flex gap-2 justify-between ${
+                  element === selectedElement ? "bg-gray-100" : ""
+                }`}
+                onClick={() => {
+                  if (!manager) return;
+                  manager.selectElement(element);
+                  setSelectedElement(element);
+                }}
+              >
+                <div>{element.constructor.name}</div>
+                <div
+                  className="cursor-pointer"
                   onClick={() => {
                     if (!manager) return;
-                    manager.selectElement(element);
-                    setSelectedElement(manager.selectedElement);
+                    manager.removeElement(element);
+                    setSelectedElement(null);
                   }}
                 >
-                  {element.constructor.name}
-                </button>
+                  x
+                </div>
               </div>
             );
           })}
-      </div>
-      <div className="absolute top-0 right-0 p-2 bg-white flex flex-col gap-2">
+        </div>
+      )}
+      <div className="absolute top-0 right-0 p-2 bg-white flex flex-col gap-2 rounded-lg m-2">
         {(() => {
           if (manager && selectedElement) {
-            if (selectedElement instanceof Circle) {
+            if (selectedElement instanceof Ellipse) {
               return (
-                <CircleEditor
+                <EllipseEditor
                   key={selectedElement.id}
-                  circle={selectedElement}
+                  ellipse={selectedElement}
                   manager={manager}
                 />
               );
