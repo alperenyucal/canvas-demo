@@ -1,5 +1,6 @@
 import { nanoid } from "nanoid";
 import { Shape, ShapeProperties } from "./Shape";
+import { Application, Graphics } from "pixi.js";
 
 export interface RectangleProperties extends ShapeProperties {
   x: number;
@@ -34,22 +35,38 @@ export class Rectangle implements Shape<RectangleProperties> {
     return { dx: x - this.x, dy: y - this.y };
   }
 
-  draw(context: CanvasRenderingContext2D) {
+  draw(app: Application) {
     const lineWidth = this.lineWidth || 1;
-    context.beginPath();
-    context.roundRect(
-      this.x + lineWidth / 2,
-      this.y + lineWidth / 2,
-      this.width - lineWidth,
-      this.height - lineWidth,
-      this.radius
-    );
 
-    context.fillStyle = this.fillStyle || "rgba(52, 73, 94, 1)";
-    context.fill();
-    context.strokeStyle = this.strokeStyle || "rgba(52, 73, 94, 1)";
-    context.lineWidth = this.lineWidth || 1;
-    context.stroke();
+    const rect = new Graphics()
+      .rect(this.x, this.y, this.width, this.height)
+      .fill(0x000000)
+      .stroke(0x000000)
+      .roundRect(
+        this.x + lineWidth / 2,
+        this.y + lineWidth / 2,
+        this.width - lineWidth,
+        this.height - lineWidth,
+        this.radius
+      );
+
+    rect.fillStyle = this.fillStyle || "rgba(52, 73, 94, 1)";
+    app.stage.addChild(rect);
+
+    // context.beginPath();
+    // context.roundRect(
+    //   this.x + lineWidth / 2,
+    //   this.y + lineWidth / 2,
+    //   this.width - lineWidth,
+    //   this.height - lineWidth,
+    //   this.radius
+    // );
+
+    // context.fillStyle = this.fillStyle || "rgba(52, 73, 94, 1)";
+    // context.fill();
+    // context.strokeStyle = this.strokeStyle || "rgba(52, 73, 94, 1)";
+    // context.lineWidth = this.lineWidth || 1;
+    // context.stroke();
   }
 
   isPointInside(x: number, y: number) {
@@ -61,19 +78,27 @@ export class Rectangle implements Shape<RectangleProperties> {
     );
   }
 
-  highlight(context: CanvasRenderingContext2D) {
-    context.beginPath();
-    context.rect(this.x - 2, this.y - 2, this.width + 4, this.height + 4);
-    context.strokeStyle = "rgba(30, 139, 195, 0.5)";
-    context.lineWidth = 2;
-    context.stroke();
+  highlight(app: Application) {
+    const rect = new Graphics()
+      .rect(this.x - 2, this.y - 2, this.width + 4, this.height + 4)
+      .stroke(0x1e8bc3);
+    app.stage.addChild(rect);
+    // context.beginPath();
+    // context.rect(this.x - 2, this.y - 2, this.width + 4, this.height + 4);
+    // context.strokeStyle = "rgba(30, 139, 195, 0.5)";
+    // context.lineWidth = 2;
+    // context.stroke();
   }
 
-  select(context: CanvasRenderingContext2D) {
-    context.beginPath();
-    context.rect(this.x, this.y, this.width, this.height);
-    context.fillStyle = "rgba(30, 139, 195, 0.5)";
-    context.fill();
+  select(app: Application) {
+    const rect = new Graphics()
+      .rect(this.x, this.y, this.width, this.height)
+      .fill(0x1e8bc3);
+    app.stage.addChild(rect);
+    // context.beginPath();
+    // context.rect(this.x, this.y, this.width, this.height);
+    // context.fillStyle = "rgba(30, 139, 195, 0.5)";
+    // context.fill();
   }
 
   move(x: number, y: number) {

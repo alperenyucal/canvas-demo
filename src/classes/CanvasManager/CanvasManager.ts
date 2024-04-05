@@ -1,3 +1,4 @@
+import { Application } from "pixi.js";
 import { CanvasElement } from "../Elements/CanvasElement";
 import { Ellipse, EllipseProperties } from "../Elements/Ellipse";
 import { Rectangle, RectangleProperties } from "../Elements/Rectangle";
@@ -14,17 +15,11 @@ export class CanvasManager {
   private _selectedElement: CanvasElement | null = null;
   private _highlightedElement: CanvasElement | null = null;
 
-  constructor(
-    elementTreeCanvas: HTMLCanvasElement,
-    actionCanvas: HTMLCanvasElement
-  ) {
+  constructor(public app: Application) {
     this.elementTree = {};
-    this.elementTreeRenderer = new ElementTreeRenderer(
-      elementTreeCanvas,
-      this.elementTree
-    );
+    this.elementTreeRenderer = new ElementTreeRenderer(app, this.elementTree);
     this.actionRenderer = new ActionRenderer(
-      actionCanvas,
+      app,
       this.selectedElement,
       this.highlightedElement
     );

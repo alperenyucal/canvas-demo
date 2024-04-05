@@ -1,5 +1,6 @@
 import { nanoid } from "nanoid";
 import { Shape, ShapeProperties } from "./Shape";
+import { Application, Graphics } from "pixi.js";
 
 export interface EllipseProperties extends ShapeProperties {
   width: number;
@@ -49,26 +50,27 @@ export class Ellipse implements Shape<EllipseProperties> {
     return { dx: x - this.x, dy: y - this.y };
   }
 
-  draw(context: CanvasRenderingContext2D) {
+  draw(app: Application) {
     const lineWidth = this.lineWidth || 1;
+    const ellipse = new Graphics().ellipse(this.x, this.y, this.width, this.height).fill(0x000000).stroke(0x000000);
+    app.stage.addChild(ellipse);
+    // context.beginPath();
+    // context.ellipse(
+    //   this.cx,
+    //   this.cy,
+    //   this.rx - lineWidth / 2,
+    //   this.ry - lineWidth / 2,
+    //   0,
+    //   0,
+    //   2 * Math.PI
+    // );
 
-    context.beginPath();
-    context.ellipse(
-      this.cx,
-      this.cy,
-      this.rx - lineWidth / 2,
-      this.ry - lineWidth / 2,
-      0,
-      0,
-      2 * Math.PI
-    );
+    // context.strokeStyle = this.strokeStyle || "rgba(52, 73, 94, 1)";
+    // context.lineWidth = this.lineWidth || 1;
+    // context.stroke();
 
-    context.strokeStyle = this.strokeStyle || "rgba(52, 73, 94, 1)";
-    context.lineWidth = this.lineWidth || 1;
-    context.stroke();
-
-    context.fillStyle = this.fillStyle || "rgba(52, 73, 94, 1)";
-    context.fill();
+    // context.fillStyle = this.fillStyle || "rgba(52, 73, 94, 1)";
+    // context.fill();
   }
 
   isPointInside(x: number, y: number) {
@@ -80,19 +82,24 @@ export class Ellipse implements Shape<EllipseProperties> {
     );
   }
 
-  highlight(context: CanvasRenderingContext2D) {
-    context.beginPath();
-    context.rect(this.x - 2, this.y - 2, this.width + 4, this.height + 4);
-    context.strokeStyle = "rgba(30, 139, 195, 0.5)";
-    context.lineWidth = 2;
-    context.stroke();
+  highlight(app:Application) {
+    const rect = new Graphics().rect(this.x - 2, this.y - 2, this.width + 4, this.height + 4).stroke(0x1E8BC3);
+    app.stage.addChild(rect);
+
+    // context.beginPath();
+    // context.rect(this.x - 2, this.y - 2, this.width + 4, this.height + 4);
+    // context.strokeStyle = "rgba(30, 139, 195, 0.5)";
+    // context.lineWidth = 2;
+    // context.stroke();
   }
 
-  select(context: CanvasRenderingContext2D) {
-    context.beginPath();
-    context.rect(this.x, this.y, this.width, this.height);
-    context.fillStyle = "rgba(30, 139, 195, 0.5)";
-    context.fill();
+  select(app: Application) {
+    const rect = new Graphics().rect(this.x, this.y, this.width, this.height).fill(0x1E8BC3);
+    app.stage.addChild(rect);
+    // context.beginPath();
+    // context.rect(this.x, this.y, this.width, this.height);
+    // context.fillStyle = "rgba(30, 139, 195, 0.5)";
+    // context.fill();
   }
 
   move(x: number, y: number) {

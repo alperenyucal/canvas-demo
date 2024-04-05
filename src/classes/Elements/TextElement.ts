@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import { CanvasElement } from "./CanvasElement";
-import { MeasuringRenderer } from "../Renderers/MeasuringRenderer";
+import { Application,Graphics,Text } from "pixi.js";
 
 export interface TextProperties {
   text: string;
@@ -17,7 +17,6 @@ export class TextElement implements CanvasElement<TextProperties> {
   text: string;
   fontSize?: number;
   fillStyle?: string;
-  measuringRenderer: MeasuringRenderer;
 
   constructor(properties: TextProperties) {
     this.id = nanoid();
@@ -26,12 +25,10 @@ export class TextElement implements CanvasElement<TextProperties> {
     this.x = x;
     this.y = y;
     this.setProperties(rest);
-    this.measuringRenderer = MeasuringRenderer.getInstance();
   }
 
   get width() {
-    return this.measuringRenderer.measureText(this.text, this.fontSize || 16)
-      .width;
+    return 200;
   }
 
   get height() {
@@ -42,18 +39,23 @@ export class TextElement implements CanvasElement<TextProperties> {
     Object.assign(this, properties);
   }
 
-  draw(context: CanvasRenderingContext2D) {
-    context.beginPath();
-    context.font = `${this.fontSize || 16}px Arial`;
-    context.fillStyle = this.fillStyle || "rgba(52, 73, 94, 1)";
-    context.fillText(this.text, this.x, this.y);
+  draw(app: Application) {
+    const text = new Text({
+      text: this.text,
+     
+    },);
+    text.x = this.x;
+    text.y = this.y;
+    app.stage.addChild(text);
+
+    // context.beginPath();
+    // context.font = `${this.fontSize || 16}px Arial`;
+    // context.fillStyle = this.fillStyle || "rgba(52, 73, 94, 1)";
+    // context.fillText(this.text, this.x, this.y);
   }
 
   isPointInside(x: number, y: number) {
-    const width = this.measuringRenderer.measureText(
-      this.text,
-      this.fontSize || 16
-    ).width;
+    const width = this.width;
     const height = this.fontSize || 16;
 
     return (
@@ -61,29 +63,35 @@ export class TextElement implements CanvasElement<TextProperties> {
     );
   }
 
-  highlight(context: CanvasRenderingContext2D) {
-    context.beginPath();
-    const width = this.measuringRenderer.measureText(
-      this.text,
-      this.fontSize || 16
-    ).width;
-    const height = this.fontSize || 16;
-    context.rect(this.x - 1, this.y - 1 - height, width + 1, height + 1);
-    context.strokeStyle = "rgba(30, 139, 195, 0.5)";
-    context.lineWidth = 2;
-    context.stroke();
+  highlight(app: Application) {
+    const rect = new Graphics().rect(this.x, this.y - this.height, this.width, this.height).stroke(0x1E8BC3);
+    app.stage.addChild(rect);
+    // context.beginPath();
+    // const width = this.measuringRenderer.measureText(
+    //   this.text,
+    //   this.fontSize || 16
+    // ).width;
+    // const height = this.fontSize || 16;
+    // context.rect(this.x - 1, this.y - 1 - height, width + 1, height + 1);
+    // context.strokeStyle = "rgba(30, 139, 195, 0.5)";
+    // context.lineWidth = 2;
+    // context.stroke();
   }
 
-  select(context: CanvasRenderingContext2D) {
-    context.beginPath();
-    const width = this.measuringRenderer.measureText(
-      this.text,
-      this.fontSize || 16
-    ).width;
-    const height = this.fontSize || 16;
-    context.rect(this.x, this.y - height, width, height);
-    context.fillStyle = "rgba(30, 139, 195, 0.5)";
-    context.fill();
+  select(app: Application) {
+    const rect = new Graphics().rect(this.x, this.y - this.height, this.width, this.height).fill(0x1E8BC3);
+    app.stage.addChild(rect);
+
+
+    // context.beginPath();
+    // const width = this.measuringRenderer.measureText(
+    //   this.text,
+    //   this.fontSize || 16
+    // ).width;
+    // const height = this.fontSize || 16;
+    // context.rect(this.x, this.y - height, width, height);
+    // context.fillStyle = "rgba(30, 139, 195, 0.5)";
+    // context.fill();
   }
 
   move(x: number, y: number) {

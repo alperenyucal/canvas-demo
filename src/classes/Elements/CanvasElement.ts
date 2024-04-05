@@ -1,16 +1,18 @@
+import { Application } from "pixi.js";
+
 export type CanvasElement<T = {}> = T & {
   id: string;
   x: number;
   y: number;
   width: number;
   height: number;
-  draw(context: CanvasRenderingContext2D): void;
-  highlight(context: CanvasRenderingContext2D): void;
-  select(context: CanvasRenderingContext2D): void;
+  draw(app: Application): void;
+  highlight(app: Application): void;
+  select(app: Application): void;
   isPointInside(
     x: number,
     y: number,
-    context?: CanvasRenderingContext2D
+    app?: Application
   ): boolean;
   move(x: number, y: number): void;
   getDiff(x: number, y: number): { dx: number; dy: number };

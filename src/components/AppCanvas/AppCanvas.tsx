@@ -8,12 +8,12 @@ import { CanvasManager } from "../../classes/CanvasManager/CanvasManager";
 import { EllipseEditor } from "./EllipseEditor";
 import { RectangleEditor } from "./RectangleEditor";
 import { TextEditor } from "./TextElementEditor";
-import { Group } from "../../classes/Elements/Group";
 import { CanvasDragEvent } from "../../lib/DragEvent";
+import * as PIXI from "pixi.js";
 
 export const AppCanvas: React.FC = () => {
-  const elementTreeCanvasRef = useRef<HTMLCanvasElement>(null);
-  const actionCanvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasContainerRef = useRef<HTMLDivElement>(null);
+
   const [mode, setMode] = useState("draw");
   const [selectedShape, setSelectedShape] = useState<
     "ellipse" | "rectangle" | "text" | "group"
@@ -22,60 +22,33 @@ export const AppCanvas: React.FC = () => {
   const [selectedElement, setSelectedElement] = useState<Shape | null>();
 
   useEffect(() => {
-    if (!elementTreeCanvasRef.current || !actionCanvasRef.current) return;
-    setRenderer(
-      new CanvasManager(elementTreeCanvasRef.current, actionCanvasRef.current)
-    );
-  }, []);
+    async function init() {
+      const app = new PIXI.Application();
 
-  useEffect(() => {
-    const actionCanvas = actionCanvasRef.current;
-    if (!actionCanvas) return;
-    if (!manager) return;
+      await app.init({
+        backgroundAlpha: 0,
+        resizeTo: window,
+      });
 
-    let isMouseDown = false;
+      canvasContainerRef.current?.replaceChildren(app.canvas);
 
-    let diff = { dx: 0, dy: 0 };
-
-    const downListener = () => {
-      isMouseDown = true;
-      manager.selectElementAtPosition();
-      diff = manager.selectedElement?.getDiff(
-        manager.mousePosition.x,
-        manager.mousePosition.y
-      ) || { dx: 0, dy: 0 };
-    };
-
-    const moveListener = () => {
-      if (!isMouseDown) return;
-      if (!diff) return;
-      actionCanvas.dispatchEvent(
-        new CanvasDragEvent("drag", {
-          start: {
-            x: manager.mousePosition.x - diff.dx,
-            y: manager.mousePosition.y - diff.dy,
-          },
-          mousePosition: manager.mousePosition,
-        })
+      setRenderer(new CanvasManager(app));
+      app.stage.addChild(
+        new PIXI.Graphics()
+          .rect(300, 300, 100, 100)
+          .fill(0x000000)
+          .stroke(0x000000)
       );
-      manager.moveSelectedElement(diff.dx, diff.dy);
-    };
 
-    const upListener = () => {
-      isMouseDown = false;
-    };
+      const basicText = new PIXI.Text({ text: "Basic text in pixi" });
 
-    actionCanvas.addEventListener("mousedown", downListener);
-    actionCanvas.addEventListener("mousemove", moveListener);
-    actionCanvas.addEventListener("mouseup", upListener);
-    actionCanvas.addEventListener("drag", () => {});
+      basicText.x = 50;
+      basicText.y = 100;
 
-    return () => {
-      actionCanvas.removeEventListener("mousedown", downListener);
-      actionCanvas.removeEventListener("mousemove", moveListener);
-      actionCanvas.removeEventListener("mouseup", upListener);
-    };
-  }, [manager]);
+      app.stage.addChild(basicText);
+    }
+    if (!manager) init();
+  }, []);
 
   function handleMouseMove(
     event: React.MouseEvent<HTMLCanvasElement, MouseEvent>
@@ -88,11 +61,65 @@ export const AppCanvas: React.FC = () => {
     manager.highlightElement();
   }
 
+  useEffect(() => {
+    try {
+      const canvas = manager?.app.canvas;
+      if (!canvas) return;
+      if (!manager) return;
+
+      let isMouseDown = false;
+
+      let diff = { dx: 0, dy: 0 };
+
+      const downListener = () => {
+        isMouseDown = true;
+        manager.selectElementAtPosition();
+        diff = manager.selectedElement?.getDiff(
+          manager.mousePosition.x,
+          manager.mousePosition.y
+        ) || { dx: 0, dy: 0 };
+      };
+
+      const moveListener = (e: any) => {
+        handleMouseMove(e);
+        if (!isMouseDown) return;
+        if (!diff) return;
+        canvas.dispatchEvent(
+          new CanvasDragEvent("drag", {
+            start: {
+              x: manager.mousePosition.x - diff.dx,
+              y: manager.mousePosition.y - diff.dy,
+            },
+            mousePosition: manager.mousePosition,
+          })
+        );
+        manager.moveSelectedElement(diff.dx, diff.dy);
+      };
+
+      const upListener = () => {
+        isMouseDown = false;
+      };
+
+      canvas.addEventListener("mousedown", downListener);
+      canvas.addEventListener("mousemove", moveListener);
+      canvas.addEventListener("mouseup", upListener);
+      canvas.addEventListener("drag", () => {});
+
+      return () => {
+        canvas.removeEventListener("mousedown", downListener);
+        canvas.removeEventListener("mousemove", moveListener);
+        canvas.removeEventListener("mouseup", upListener);
+      };
+    } catch (e) {
+      console.error(e);
+    }
+  }, [manager]);
+
   return (
     <div className="relative">
-      <canvas ref={elementTreeCanvasRef} className="absolute" />
-      <canvas
-        ref={actionCanvasRef}
+      <div ref={canvasContainerRef} className="absolute top-0 left-0" />
+      {/* <canvas
+        ref={canvasContainerRef}
         className="absolute"
         onClick={() => {
           if (!manager) return;
@@ -147,7 +174,7 @@ export const AppCanvas: React.FC = () => {
           setMode("select");
         }}
         onMouseMove={handleMouseMove}
-      />
+      /> */}
       <div className="absolute top-0 left-0 p-2 bg-white flex gap-2 rounded-lg m-2">
         <Button
           active={mode === "select"}
@@ -236,7 +263,7 @@ export const AppCanvas: React.FC = () => {
         </div>
       )}
       <div className="absolute top-0 right-0 p-2 bg-white flex flex-col gap-2 rounded-lg m-2">
-        {Object.keys(manager?.elementTree??{}).length}
+        {Object.keys(manager?.elementTree ?? {}).length}
         {(() => {
           if (manager && selectedElement) {
             if (selectedElement instanceof Ellipse) {

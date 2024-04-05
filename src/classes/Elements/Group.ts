@@ -1,5 +1,6 @@
 import { nanoid } from "nanoid";
 import { CanvasElement } from "./CanvasElement";
+import { Application, Graphics } from "pixi.js";
 
 export class Group implements CanvasElement {
   id: string;
@@ -22,11 +23,13 @@ export class Group implements CanvasElement {
       this.y;
   }
 
-  select(context: CanvasRenderingContext2D): void {
-    context.beginPath();
-    context.rect(this.x, this.y, this.width, this.height);
-    context.fillStyle = "rgba(30, 139, 195, 0.5)";
-    context.fill();
+  select(app: Application): void {
+    const rect = new Graphics().rect(this.x, this.y, this.width, this.height).stroke(0x1E8BC3);
+    app.stage.addChild(rect);
+    // context.beginPath();
+    // context.rect(this.x, this.y, this.width, this.height);
+    // context.fillStyle = "rgba(30, 139, 195, 0.5)";
+    // context.fill();
   }
 
   addChild(element: CanvasElement): void {
@@ -43,8 +46,8 @@ export class Group implements CanvasElement {
     return { dx: x - this.x, dy: y - this.y };
   }
 
-  draw(context: CanvasRenderingContext2D) {
-    this.elements.forEach((element) => element.draw(context));
+  draw(app: Application) {
+    this.elements.forEach((element) => element.draw(app));
   }
 
   isPointInside(x: number, y: number) {
@@ -56,11 +59,13 @@ export class Group implements CanvasElement {
     );
   }
 
-  highlight(context: CanvasRenderingContext2D) {
-    context.beginPath();
-    context.rect(this.x - 2, this.y - 2, this.width + 4, this.height + 4);
-    context.strokeStyle = "rgba(30, 139, 195, 0.5)";
-    context.stroke();
+  highlight(app: Application) {
+    const rect = new Graphics().rect(this.x - 2, this.y - 2, this.width + 4, this.height + 4).stroke(0x1E8BC3);
+    app.stage.addChild(rect);
+    // context.beginPath();
+    // context.rect(this.x - 2, this.y - 2, this.width + 4, this.height + 4);
+    // context.strokeStyle = "rgba(30, 139, 195, 0.5)";
+    // context.stroke();
   }
 
   move(x: number, y: number) {
