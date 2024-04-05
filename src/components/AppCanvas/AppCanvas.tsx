@@ -205,8 +205,8 @@ export const AppCanvas: React.FC = () => {
       </div>
       {manager?.elementTree && Object.keys(manager.elementTree).length > 0 && (
         <div className="absolute top-14 left-0 p-2 bg-white flex flex-col gap-2 overflow-auto max-h-screen rounded-lg m-2">
-          {/* recursice tree render */}
-          {Object.values(manager.elementTree).map((element) => {
+          {/* recursive tree render */}
+          {/* {Object.values(manager.elementTree).map((element) => {
             return (
               <div
                 key={element.id}
@@ -232,10 +232,11 @@ export const AppCanvas: React.FC = () => {
                 </div>
               </div>
             );
-          })}
+          })} */}
         </div>
       )}
       <div className="absolute top-0 right-0 p-2 bg-white flex flex-col gap-2 rounded-lg m-2">
+        {Object.keys(manager?.elementTree??{}).length}
         {(() => {
           if (manager && selectedElement) {
             if (selectedElement instanceof Ellipse) {

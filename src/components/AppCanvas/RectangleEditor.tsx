@@ -1,15 +1,8 @@
 import { CanvasManager } from "../../classes/CanvasManager/CanvasManager";
 import { Rectangle } from "../../classes/Elements/Rectangle";
+import { Input } from "../Input";
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
 
-const Input = (props: InputProps) => (
-  <input
-    type="text"
-    {...props}
-    className="border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 block sm:text-sm w-20"
-  />
-);
 
 export const RectangleEditor: React.FC<{
   rectangle: Rectangle;

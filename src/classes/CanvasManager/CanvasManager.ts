@@ -28,7 +28,7 @@ export class CanvasManager {
       this.selectedElement,
       this.highlightedElement
     );
-    // this.loadElements();
+    this.loadElements();
   }
 
   get selectedElement() {
@@ -148,29 +148,20 @@ export class CanvasManager {
   }
 
   async loadElements() {
-    const yieldToMain = () => {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve(0);
-        }, 0);
-      });
-    };
-
-    while (savedElements.length > 0) {
-      const element: any = savedElements.shift();
+    for (let element of savedElements) {
       switch (element.type) {
         case "rectangle":
-          this.addElement(new Rectangle(element), false);
+          this.addElement(new Rectangle(element as any), false);
           break;
         case "ellipse":
-          this.addElement(new Ellipse(element), false);
+          this.addElement(new Ellipse(element as any), false);
           break;
         case "text":
-          this.addElement(new TextElement(element), false);
+          this.addElement(new TextElement(element as any), false);
           break;
       }
-      await yieldToMain();
     }
+
     this.elementTreeRenderer.render();
     this.actionRenderer.render();
   }
