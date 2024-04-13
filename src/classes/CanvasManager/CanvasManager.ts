@@ -1,3 +1,4 @@
+import { Surface } from "canvaskit-wasm";
 import { CanvasElement } from "../Elements/CanvasElement";
 import { Ellipse, EllipseProperties } from "../Elements/Ellipse";
 import { Rectangle, RectangleProperties } from "../Elements/Rectangle";
@@ -14,10 +15,7 @@ export class CanvasManager {
   private _selectedElement: CanvasElement | null = null;
   private _highlightedElement: CanvasElement | null = null;
 
-  constructor(
-    elementTreeCanvas: HTMLCanvasElement,
-    actionCanvas: HTMLCanvasElement
-  ) {
+  constructor(elementTreeCanvas: Surface, actionCanvas: Surface) {
     this.elementTree = {};
     this.elementTreeRenderer = new ElementTreeRenderer(
       elementTreeCanvas,

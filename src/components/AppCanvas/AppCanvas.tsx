@@ -8,24 +8,28 @@ import { CanvasManager } from "../../classes/CanvasManager/CanvasManager";
 import { EllipseEditor } from "./EllipseEditor";
 import { RectangleEditor } from "./RectangleEditor";
 import { TextEditor } from "./TextElementEditor";
-import { Group } from "../../classes/Elements/Group";
 import { CanvasDragEvent } from "../../lib/DragEvent";
+import { CanvasKit } from "../../lib/CanvasKitInit";
 
 export const AppCanvas: React.FC = () => {
   const elementTreeCanvasRef = useRef<HTMLCanvasElement>(null);
   const actionCanvasRef = useRef<HTMLCanvasElement>(null);
+
+  const [fps, setFps] = useState(0);
   const [mode, setMode] = useState("draw");
   const [selectedShape, setSelectedShape] = useState<
     "ellipse" | "rectangle" | "text" | "group"
   >();
-  const [manager, setRenderer] = useState<CanvasManager>();
+  const [manager, setManager] = useState<CanvasManager>();
   const [selectedElement, setSelectedElement] = useState<Shape | null>();
 
   useEffect(() => {
-    if (!elementTreeCanvasRef.current || !actionCanvasRef.current) return;
-    setRenderer(
-      new CanvasManager(elementTreeCanvasRef.current, actionCanvasRef.current)
-    );
+    const elementTreeSurface =
+      CanvasKit.MakeWebGLCanvasSurface("elementTreeCanvas");
+    const actionSurface = CanvasKit.MakeWebGLCanvasSurface("actionCanvas");
+    if (!elementTreeSurface || !actionSurface) return;
+
+    setManager(new CanvasManager(elementTreeSurface, actionSurface));
   }, []);
 
   useEffect(() => {
@@ -85,15 +89,25 @@ export const AppCanvas: React.FC = () => {
       x: event.clientX,
       y: event.clientY,
     };
+    setFps(manager.elementTreeRenderer.fps);
     manager.highlightElement();
   }
 
   return (
     <div className="relative">
-      <canvas ref={elementTreeCanvasRef} className="absolute" />
       <canvas
-        ref={actionCanvasRef}
+        id="elementTreeCanvas"
+        ref={elementTreeCanvasRef}
         className="absolute"
+        width={window.innerWidth}
+        height={window.innerHeight}
+      />
+      <canvas
+        id="actionCanvas"
+        className="absolute"
+        ref={actionCanvasRef}
+        width={window.innerWidth}
+        height={window.innerHeight}
         onClick={() => {
           if (!manager) return;
           if (mode === "draw") {
@@ -105,7 +119,7 @@ export const AppCanvas: React.FC = () => {
                 width: 100,
                 height: 100,
               });
-              manager.addElement(ellipse);
+              // manager.addElement(ellipse);
             } else if (selectedShape === "rectangle") {
               const rectangle = new Rectangle({
                 ...manager.mousePosition,
@@ -118,7 +132,7 @@ export const AppCanvas: React.FC = () => {
                 ...manager.mousePosition,
                 text: "Hello World",
               });
-              manager.addElement(text);
+              // manager.addElement(text);
             } else if (selectedShape === "group") {
               const ellipse = new Ellipse({
                 x: manager.mousePosition.x + 100,
@@ -134,9 +148,9 @@ export const AppCanvas: React.FC = () => {
                 height: 100,
               });
 
-              const group = new Group([rectangle, ellipse]);
+              // const group = new Group([rectangle, ellipse]);
 
-              manager.addElement(group);
+              // manager.addElement(group);
             }
           }
           if (mode === "select") {
@@ -148,6 +162,7 @@ export const AppCanvas: React.FC = () => {
         }}
         onMouseMove={handleMouseMove}
       />
+
       <div className="absolute top-0 left-0 p-2 bg-white flex gap-2 rounded-lg m-2">
         <Button
           active={mode === "select"}
@@ -236,7 +251,8 @@ export const AppCanvas: React.FC = () => {
         </div>
       )}
       <div className="absolute top-0 right-0 p-2 bg-white flex flex-col gap-2 rounded-lg m-2">
-        {Object.keys(manager?.elementTree??{}).length}
+        <div>FPS: {fps}</div>
+        {Object.keys(manager?.elementTree ?? {}).length}
         {(() => {
           if (manager && selectedElement) {
             if (selectedElement instanceof Ellipse) {

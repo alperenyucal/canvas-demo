@@ -1,5 +1,7 @@
 import { nanoid } from "nanoid";
 import { Shape, ShapeProperties } from "./Shape";
+import { CanvasKit } from "../../lib/CanvasKitInit";
+import { Surface } from "canvaskit-wasm";
 
 export interface RectangleProperties extends ShapeProperties {
   x: number;
@@ -34,22 +36,36 @@ export class Rectangle implements Shape<RectangleProperties> {
     return { dx: x - this.x, dy: y - this.y };
   }
 
-  draw(context: CanvasRenderingContext2D) {
-    const lineWidth = this.lineWidth || 1;
-    context.beginPath();
-    context.roundRect(
-      this.x + lineWidth / 2,
-      this.y + lineWidth / 2,
-      this.width - lineWidth,
-      this.height - lineWidth,
-      this.radius
+  draw(surface: Surface) {
+    const canvas = surface.getCanvas();
+    const rr = CanvasKit.RRectXY(
+      CanvasKit.LTRBRect(
+        this.x,
+        this.y,
+        this.x + this.width,
+        this.y + this.height
+      ),
+      this.radius || 0,
+      this.radius || 0
     );
 
-    context.fillStyle = this.fillStyle || "rgba(52, 73, 94, 1)";
-    context.fill();
-    context.strokeStyle = this.strokeStyle || "rgba(52, 73, 94, 1)";
-    context.lineWidth = this.lineWidth || 1;
-    context.stroke();
+    // fill
+    const fillPaint = new CanvasKit.Paint();
+    fillPaint.setColor(CanvasKit.parseColorString(this.fillStyle || "#000000"));
+    fillPaint.setStyle(CanvasKit.PaintStyle.Fill);
+    fillPaint.setAntiAlias(true);
+
+    canvas.drawRRect(rr, fillPaint);
+
+    // stroke
+    const strokePaint = new CanvasKit.Paint();
+    strokePaint.setColor(
+      CanvasKit.parseColorString(this.strokeStyle || "#000000")
+    );
+    strokePaint.setStyle(CanvasKit.PaintStyle.Stroke);
+    strokePaint.setStrokeWidth(this.lineWidth || 1);
+    strokePaint.setAntiAlias(true);
+    canvas.drawRRect(rr, strokePaint);
   }
 
   isPointInside(x: number, y: number) {
@@ -61,19 +77,48 @@ export class Rectangle implements Shape<RectangleProperties> {
     );
   }
 
-  highlight(context: CanvasRenderingContext2D) {
-    context.beginPath();
-    context.rect(this.x - 2, this.y - 2, this.width + 4, this.height + 4);
-    context.strokeStyle = "rgba(30, 139, 195, 0.5)";
-    context.lineWidth = 2;
-    context.stroke();
+  highlight(surface: Surface) {
+    const canvas = surface.getCanvas();
+    const rr = CanvasKit.RRectXY(
+      CanvasKit.LTRBRect(
+        this.x - 2,
+        this.y - 2,
+        this.x + this.width + 2,
+        this.y + this.height + 2
+      ),
+      this.radius || 0,
+      this.radius || 0
+    );
+
+    // stroke
+    const strokePaint = new CanvasKit.Paint();
+    strokePaint.setColor(CanvasKit.parseColorString("#1E8BC399"));
+    strokePaint.setStyle(CanvasKit.PaintStyle.Stroke);
+    strokePaint.setStrokeWidth(2);
+    strokePaint.setAntiAlias(true);
+    canvas.drawRRect(rr, strokePaint);
   }
 
-  select(context: CanvasRenderingContext2D) {
-    context.beginPath();
-    context.rect(this.x, this.y, this.width, this.height);
-    context.fillStyle = "rgba(30, 139, 195, 0.5)";
-    context.fill();
+  select(surface: Surface) {
+    const canvas = surface.getCanvas();
+    const rr = CanvasKit.RRectXY(
+      CanvasKit.LTRBRect(
+        this.x,
+        this.y,
+        this.x + this.width,
+        this.y + this.height
+      ),
+      0,
+      0
+    );
+
+    // fill
+    const fillPaint = new CanvasKit.Paint();
+    fillPaint.setColor(CanvasKit.parseColorString("#1E8BC399"));
+    fillPaint.setStyle(CanvasKit.PaintStyle.Fill);
+    fillPaint.setAntiAlias(true);
+
+    canvas.drawRRect(rr, fillPaint);
   }
 
   move(x: number, y: number) {

@@ -1,3 +1,4 @@
+import { Surface } from "canvaskit-wasm";
 import { CanvasElement } from "../Elements/CanvasElement";
 import { BaseRenderer } from "../Renderers/BaseRenderer";
 
@@ -5,17 +6,17 @@ export class ElementTreeRenderer extends BaseRenderer {
   elementTree: Record<string, CanvasElement>;
 
   constructor(
-    public canvas: HTMLCanvasElement,
+    public surface: Surface,
     elementTree: Record<string, CanvasElement>
   ) {
-    super(canvas);
+    super(surface);
     this.elementTree = elementTree;
   }
 
   draw = () => {
     this.clear();
     Object.values(this.elementTree).forEach((element) => {
-      element.draw(this.context);
+      element.draw(this.surface);
     });
   };
 }
