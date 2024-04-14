@@ -5,18 +5,27 @@ const vh = 900;
 const maxWidth = 100;
 const maxHeight = 100;
 
-const elementCount = 20000;
+const elementCount = 10000;
 
 const colorPalette = [
-  "red",
-  "blue",
-  "green",
-  "yellow",
-  "orange",
-  "purple",
-  "pink",
-  "black",
-  "white",
+  // "red",
+  "#FF0000",
+  // "blue",
+  "#0000FF",
+  // "green",
+  "#00FF00",
+  // "yellow",
+  "#FFFF00",
+  // "orange",
+  "#FFA500",
+  // "purple",
+  "#800080",
+  // "pink",
+  "#FFC0CB",
+  // "black",
+  "#000000",
+  // "white"
+  "#FFFFFF",
 ];
 
 const generateRandomRectangle = () => {
@@ -51,15 +60,15 @@ const mockGen = () => {
   const elements = [];
   for (let i = 0; i < elementCount; i++) {
     const rand = Math.random();
-    if (rand < 0.33) {
-      elements.push(generateRandomRectangle());
-    }
+    // if (rand < 0.33) {
+    elements.push(generateRandomRectangle());
+    // }
     // else if (rand < 0.66) {
     //   elements.push(generateRandomEllipse());
     // }
-    else {
-      elements.push(generateRandomTextElement());
-    }
+    // else {
+    //   elements.push(generateRandomTextElement());
+    // }
   }
   return elements;
 };
