@@ -1,6 +1,8 @@
 import _ from "lodash";
 
 export class BaseRenderer {
+  fps = 0;
+  lastLoop = new Date();
   renderCount = 0;
 
   constructor(public canvas: HTMLCanvasElement) {
@@ -50,5 +52,9 @@ export class BaseRenderer {
     this.clear();
     this.draw();
     this.renderCount++;
+
+    const currentLoop = new Date();
+    this.fps = 1000 / (currentLoop.getTime() - this.lastLoop.getTime());
+    this.lastLoop = currentLoop;
   }
 }

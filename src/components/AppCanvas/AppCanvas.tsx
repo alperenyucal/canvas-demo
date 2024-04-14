@@ -14,6 +14,8 @@ import { CanvasDragEvent } from "../../lib/DragEvent";
 export const AppCanvas: React.FC = () => {
   const elementTreeCanvasRef = useRef<HTMLCanvasElement>(null);
   const actionCanvasRef = useRef<HTMLCanvasElement>(null);
+
+  const [fps, setFps] = useState(0);
   const [mode, setMode] = useState("draw");
   const [selectedShape, setSelectedShape] = useState<
     "ellipse" | "rectangle" | "text" | "group"
@@ -86,6 +88,7 @@ export const AppCanvas: React.FC = () => {
       y: event.clientY,
     };
     manager.highlightElement();
+    setFps(manager.elementTreeRenderer.fps);
   }
 
   return (
@@ -236,7 +239,8 @@ export const AppCanvas: React.FC = () => {
         </div>
       )}
       <div className="absolute top-0 right-0 p-2 bg-white flex flex-col gap-2 rounded-lg m-2">
-        {Object.keys(manager?.elementTree??{}).length}
+        <div>FPS: {fps}</div>
+        {Object.keys(manager?.elementTree ?? {}).length}
         {(() => {
           if (manager && selectedElement) {
             if (selectedElement instanceof Ellipse) {
