@@ -1,8 +1,6 @@
-import { CanvasManager } from "../../classes/CanvasManager/CanvasManager";
-import { Rectangle } from "../../classes/Elements/Rectangle";
-import { Input } from "../Input";
-
-
+import { CanvasManager } from "../classes/CanvasManager/CanvasManager";
+import { Rectangle } from "../classes/Elements/Rectangle";
+import { Input } from "../../common/components/Input";
 
 export const RectangleEditor: React.FC<{
   rectangle: Rectangle;

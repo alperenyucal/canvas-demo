@@ -1,22 +1,21 @@
-import { CanvasManager } from "../../classes/CanvasManager/CanvasManager";
-import { Ellipse } from "../../classes/Elements/Ellipse";
-import { Input } from "../Input";
+import { CanvasManager } from "../classes/CanvasManager/CanvasManager";
+import { Rectangle } from "../classes/Elements/Rectangle";
+import { Input } from "../../common/components/Input";
 
-
-export const EllipseEditor: React.FC<{
-  ellipse: Ellipse;
+export const RectangleEditor: React.FC<{
+  rectangle: Rectangle;
   manager: CanvasManager;
-}> = ({ ellipse, manager }) => {
+}> = ({ rectangle, manager }) => {
   return (
     <>
       <div className="grid grid-cols-2 gap-2">
         <label className="flex gap-2 justify-between">
           W
           <Input
-            defaultValue={ellipse.width}
+            defaultValue={rectangle.width}
             type="number"
             onChange={(event) => {
-              manager.updateEllipseProperties({
+              manager.updateRectangleProperties({
                 width: Number(event.target.value),
               });
             }}
@@ -25,10 +24,10 @@ export const EllipseEditor: React.FC<{
         <label className="flex gap-2 justify-between">
           H
           <Input
-            defaultValue={ellipse.height}
+            defaultValue={rectangle.height}
             type="number"
             onChange={(event) => {
-              manager.updateEllipseProperties({
+              manager.updateRectangleProperties({
                 height: Number(event.target.value),
               });
             }}
@@ -37,10 +36,10 @@ export const EllipseEditor: React.FC<{
         <label className="flex gap-2 justify-between">
           X
           <Input
-            defaultValue={ellipse.x}
+            defaultValue={rectangle.x}
             type="number"
             onChange={(event) => {
-              manager.updateEllipseProperties({
+              manager.updateRectangleProperties({
                 x: Number(event.target.value),
               });
             }}
@@ -49,10 +48,10 @@ export const EllipseEditor: React.FC<{
         <label className="flex gap-2 justify-between">
           Y
           <Input
-            defaultValue={ellipse.y}
+            defaultValue={rectangle.y}
             type="number"
             onChange={(event) => {
-              manager.updateEllipseProperties({
+              manager.updateRectangleProperties({
                 y: Number(event.target.value),
               });
             }}
@@ -61,12 +60,24 @@ export const EllipseEditor: React.FC<{
       </div>
       <div>
         <label className="flex gap-2 justify-between">
+          Radius
+          <Input
+            defaultValue={rectangle.radius}
+            type="number"
+            onChange={(event) => {
+              manager.updateRectangleProperties({
+                radius: Number(event.target.value),
+              });
+            }}
+          />
+        </label>
+        <label className="flex gap-2 justify-between">
           Fill
           <Input
-            defaultValue={ellipse.fillStyle}
+            defaultValue={rectangle.fillStyle}
             type="color"
             onChange={(event) => {
-              manager.updateEllipseProperties({
+              manager.updateRectangleProperties({
                 fillStyle: event.target.value,
               });
             }}
@@ -75,10 +86,10 @@ export const EllipseEditor: React.FC<{
         <label className="flex gap-2 justify-between">
           Stroke
           <Input
-            defaultValue={ellipse.strokeStyle}
+            defaultValue={rectangle.strokeStyle}
             type="color"
             onChange={(event) => {
-              manager.updateEllipseProperties({
+              manager.updateRectangleProperties({
                 strokeStyle: event.target.value,
               });
             }}
@@ -87,10 +98,10 @@ export const EllipseEditor: React.FC<{
         <label className="flex gap-2 justify-between">
           Stroke Width
           <Input
-            defaultValue={ellipse.lineWidth}
+            defaultValue={rectangle.lineWidth}
             type="number"
             onChange={(event) => {
-              manager.updateEllipseProperties({
+              manager.updateRectangleProperties({
                 lineWidth: Number(event.target.value),
               });
             }}

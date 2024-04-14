@@ -1,5 +1,5 @@
-import { CanvasManager } from "../../classes/CanvasManager/CanvasManager";
-import { TextElement } from "../../classes/Elements/TextElement";
+import { CanvasManager } from "../classes/CanvasManager/CanvasManager";
+import { TextElement } from "../classes/Elements/TextElement";
 
 export const TextEditor: React.FC<{
   textElement: TextElement;

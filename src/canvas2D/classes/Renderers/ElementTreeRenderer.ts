@@ -1,5 +1,5 @@
 import { CanvasElement } from "../Elements/CanvasElement";
-import { BaseRenderer } from "../Renderers/BaseRenderer";
+import { BaseRenderer } from "./BaseRenderer";
 
 export class ElementTreeRenderer extends BaseRenderer {
   elementTree: Record<string, CanvasElement>;

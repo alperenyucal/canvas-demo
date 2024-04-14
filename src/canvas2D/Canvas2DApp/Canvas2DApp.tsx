@@ -1,17 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Shape } from "../../classes/Elements/Shape";
-import { Button } from "../Button";
-import { Rectangle } from "../../classes/Elements/Rectangle";
-import { Ellipse } from "../../classes/Elements/Ellipse";
-import { TextElement } from "../../classes/Elements/TextElement";
-import { CanvasManager } from "../../classes/CanvasManager/CanvasManager";
+import { Shape } from "../classes/Elements/Shape";
+import { Rectangle } from "../classes/Elements/Rectangle";
+import { Ellipse } from "../classes/Elements/Ellipse";
+import { TextElement } from "../classes/Elements/TextElement";
+import { CanvasManager } from "../classes/CanvasManager/CanvasManager";
 import { EllipseEditor } from "./EllipseEditor";
 import { RectangleEditor } from "./RectangleEditor";
 import { TextEditor } from "./TextElementEditor";
-import { Group } from "../../classes/Elements/Group";
-import { CanvasDragEvent } from "../../lib/DragEvent";
+import { Group } from "../classes/Elements/Group";
+import { CanvasDragEvent } from "../../common/lib/DragEvent";
+import { Button } from "../../common/components/Button";
 
-export const AppCanvas: React.FC = () => {
+export const Canvas2DApp: React.FC = () => {
   const elementTreeCanvasRef = useRef<HTMLCanvasElement>(null);
   const actionCanvasRef = useRef<HTMLCanvasElement>(null);
 
