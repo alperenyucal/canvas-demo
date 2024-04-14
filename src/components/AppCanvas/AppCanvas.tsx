@@ -89,8 +89,8 @@ export const AppCanvas: React.FC = () => {
       x: event.clientX,
       y: event.clientY,
     };
-    setFps(manager.elementTreeRenderer.fps);
     manager.highlightElement();
+    setFps(manager.elementTreeRenderer.fps);
   }
 
   return (
